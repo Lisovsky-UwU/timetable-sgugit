@@ -5,14 +5,16 @@ from telebot import types
 
 from . import MessageHandler
 from . import CallbackHandler
-from .handlers import handle_exceptions
 from .handlers import start
+from .handlers import empty_callback
 from .handlers import group_callback
 from .handlers import teacher_callback
 from .handlers import audience_callback
 from .handlers import favorite_callback
 from .handlers import feedback_callback
 from .handlers import main_menu_callback
+from .handlers import message_handle_exceptions
+from .handlers import callback_handle_exceptions
 from ..constants import BOT_TOKEN
 
 
@@ -21,6 +23,7 @@ message_handlers: Dict[MessageHandler, Any] = {
 }
 
 callback_handlers: Dict[CallbackHandler, Any] = {
+    empty_callback     : { 'func': lambda call: call.data.startswith('empty') },
     group_callback     : { 'func': lambda call: call.data.startswith('group') },
     teacher_callback   : { 'func': lambda call: call.data.startswith('teahcer') },
     audience_callback  : { 'func': lambda call: call.data.startswith('audience') },
@@ -38,11 +41,11 @@ def build_bot() -> TeleBot:
     bot = TeleBot(BOT_TOKEN)
 
     for handler, filter in message_handlers.items():
-        decorated = handle_exceptions(handler)
+        decorated = message_handle_exceptions(handler)
         bot.register_message_handler(decorated, pass_bot=True, **filter)
 
     for handler, filter in callback_handlers.items():
-        decorated = handle_exceptions(handler)
+        decorated = callback_handle_exceptions(handler)
         bot.register_callback_query_handler(decorated, pass_bot=True, **filter)
 
     bot.set_my_commands( [ types.BotCommand(cmd, dscr) for cmd, dscr in command_list.items() ] )
