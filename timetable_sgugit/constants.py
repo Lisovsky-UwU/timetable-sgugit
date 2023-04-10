@@ -47,3 +47,6 @@ EDUCATION_FORMS = {
     'Заочная ускоренная': 4,
     'Очно-заочная ускоренная': 5,
 }
+
+
+BOT_TOKEN = '5993068182:AAHBBY9rXcyJBM2nwGq--mS6ie7fe_t6bUU'
