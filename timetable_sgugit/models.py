@@ -30,3 +30,15 @@ class GroupCreateRequest(BaseModel):
     course         : int
     institute      : int
     education_form : int
+
+
+class LessonInfoModel(BaseModel):
+
+    id          : int
+    hour        : int
+    lesson_type : int
+    audience    : str
+    group       : str
+    teacher     : str
+    lesson_name : str
+    date        : str
