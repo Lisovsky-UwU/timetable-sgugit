@@ -1,7 +1,7 @@
 from typing import Type
 from typing import List
+from typing import Optional
 from typing import Iterable
-from functools import lru_cache
 
 from ..services import GroupDBService
 from ..models import GroupCreateRequest
@@ -14,9 +14,19 @@ class GroupDBController:
         self.service_type = service_type
 
 
-    def get(self) -> List[Group]:
+    def get_by_id(self, id: int):
         with self.service_type() as service:
-            return service.get_all()
+            return service.get_by_id(id)
+
+
+    def get(
+        self,
+        institute: Optional[int] = None,
+        education_form: Optional[int] = None,
+        course: Optional[int] = None
+    ) -> List[Group]:
+        with self.service_type() as service:
+            return service.get_by_filter(institute, education_form, course)
 
 
     def fill_for_iter(self, payload: Iterable[GroupCreateRequest]) -> List[Group]:

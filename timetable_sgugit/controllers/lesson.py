@@ -1,8 +1,11 @@
 from typing import Type
+from typing import List
 from typing import Iterable
+from typing import Optional
 
 from ..services import LessonDBService
 from ..models import LessonAddRequest
+from ..models import LessonInfoModel
 from ..orm import Lesson
 
 
@@ -30,3 +33,26 @@ class LessonDBController:
             service.commit()
 
             return data
+
+
+    def get(
+        self,
+        group: Optional[int] = None,
+        audience: Optional[str] = None,
+        teacher: Optional[int] = None,
+        date: Optional[str] = None,
+    ) -> List[LessonInfoModel]:
+        with self.service_type() as service:
+            return list(
+                LessonInfoModel(
+                    id          = lesson.id,
+                    hour        = lesson.hour,
+                    lesson_type = lesson.lesson_type,
+                    audience    = lesson.audience,
+                    group       = lesson.group_db.name,
+                    teacher     = lesson.teacher_db.name,
+                    lesson_name = lesson.lesson_name_db.name,
+                    date        = lesson.date
+                )
+                for lesson in service.get_by_filter(group, audience, teacher, date)
+            )
