@@ -25,7 +25,7 @@ message_handlers: Dict[MessageHandler, Any] = {
 callback_handlers: Dict[CallbackHandler, Any] = {
     empty_callback     : { 'func': lambda call: call.data.startswith('empty') },
     group_callback     : { 'func': lambda call: call.data.startswith('group') },
-    teacher_callback   : { 'func': lambda call: call.data.startswith('teahcer') },
+    teacher_callback   : { 'func': lambda call: call.data.startswith('teacher') },
     audience_callback  : { 'func': lambda call: call.data.startswith('audience') },
     favorite_callback  : { 'func': lambda call: call.data.startswith('favorite') },
     feedback_callback  : { 'func': lambda call: call.data.startswith('feedback') },
