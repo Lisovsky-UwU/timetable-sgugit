@@ -42,3 +42,7 @@ def get_prev_month(mont: int, year: int) -> str:
         result = result.replace(month=12, year=result.year - 1)
 
     return result.strftime('%m.%Y')
+
+
+def get_week_number(_date: date) -> int:
+    return (_date.isocalendar()[1] + 1) % 2 + 1
