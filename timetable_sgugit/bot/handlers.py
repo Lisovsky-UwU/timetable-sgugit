@@ -16,6 +16,7 @@ from ..constants import HOURS_TYPE
 from ..constants import LESSON_TYPE
 from ..constants import WEEKDAYS_TEXT
 from ..utils import format_audience_str
+from ..utils import get_week_number
 
 
 def message_handle_exceptions(handler: MessageHandler):
@@ -55,7 +56,7 @@ def main_menu_callback(callback: types.CallbackQuery, bot: TeleBot):
     )
 
 
-def _build_lesson_list(data: List[str]) -> str:
+def _build_lesson_group_list(data: List[str]) -> str:
     month = f'{data[5][:2]}.{data[5][-2:]}'
     group_id = int(data[4])
     lesson_list = ControllerFactory.lesson().get(
@@ -79,7 +80,36 @@ def _build_lesson_list(data: List[str]) -> str:
     return templates.MESSAGE_GROUP_LESSON_LIST.format(
         group.name,
         f'{data[6]}.{data[5]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
-        (_select_day.isocalendar()[1] + 1) % 2 + 1,
+        get_week_number(_select_day),
+        list_lesson_str if len(lesson_list) != 0 else templates.NO_LESSON_ON_DAY
+    )
+
+
+def _build_lesson_teacher_list(data: List[str]) -> str:
+    month = f'{data[-2][:2]}.{data[-2][-2:]}'
+    teacher_id = int(data[-3])
+    lesson_list = ControllerFactory.lesson().get(
+        teacher = teacher_id, date = f'{data[-1]}.{month}'
+    )
+    teacher = ControllerFactory.teacher().get_by_id(teacher_id)
+
+    list_lesson_str = '\n'.join(
+        templates.LESSON_TEACHER_INFO.format(
+            lesson.hour + 1,
+            HOURS_TYPE[lesson.hour],
+            lesson.lesson_name,
+            lesson.group,
+            LESSON_TYPE[lesson.lesson_type],
+            format_audience_str(lesson.audience),
+        )
+        for lesson in lesson_list
+    )
+
+    _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
+    return templates.MESSAGE_TEACHER_LESSON_LIST.format(
+        teacher.name,
+        f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
+        get_week_number(_select_day),
         list_lesson_str if len(lesson_list) != 0 else templates.NO_LESSON_ON_DAY
     )
 
@@ -106,7 +136,7 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
 
     elif len(data) == 5: # 'group|<I>|<F>|<C>|<G>|
         data.extend(date.today().strftime('%m.%Y|%d').split('|'))
-        message = _build_lesson_list(data)
+        message = _build_lesson_group_list(data)
         markup = markups.lesson_list(data)
 
     elif len(data) == 6: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>
@@ -115,7 +145,7 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
         markup = markups.calendar_markup(data)
 
     elif len(data) == 7: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>|<D>
-        message = _build_lesson_list(data)
+        message = _build_lesson_group_list(data)
         markup = markups.lesson_list(data)
 
     if message:
@@ -123,7 +153,29 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 
 def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
-    ...
+    data = callback.data.split('|')
+    message = None
+    markup = None
+
+    if len(data) == 1:
+            data.append(1)
+
+    if len(data) == 2: # 'teacher|<P>'
+        message = templates.MESSAGE_SELECT_TEACHER
+        markup = markups.teacher_list(data)
+    elif len(data) == 3: # 'teacher|<P>|<T>'
+        data.extend(date.today().strftime('%m.%Y|%d').split('|'))
+        message = _build_lesson_teacher_list(data)
+        markup = markups.lesson_list(data)
+    elif len(data) == 4: # 'teacher|<P>|<T>|<M>.<Y>'
+        message = templates.MESSAGE_SELECT_DAY
+        markup = markups.calendar_markup(data)
+    elif len(data) == 5: # 'teacher|<P>|<T>|<M>.<Y>|<D>'
+        message = _build_lesson_teacher_list(data)
+        markup = markups.lesson_list(data)
+
+    if message:
+        bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def audience_callback(callback: types.CallbackQuery, bot: TeleBot):

@@ -1,6 +1,7 @@
 from typing import Type
 from typing import List
 from typing import Iterable
+from typing import Optional
 from functools import lru_cache
 
 from ..services import TeacherDBService
@@ -23,6 +24,16 @@ class TeacherDBController:
             service.commit()
 
             return data
+
+
+    def get_all(self) -> List[Teacher]:
+        with self.service_type() as service:
+            return service.get_all()
+
+
+    def get_by_id(self, id: int) -> Optional[Teacher]:
+        with self.service_type() as service:
+            return service.get_by_id(id)
 
 
     @lru_cache(maxsize=None)

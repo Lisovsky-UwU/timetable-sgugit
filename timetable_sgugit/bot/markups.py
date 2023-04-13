@@ -1,3 +1,4 @@
+from math import ceil
 from typing import List
 from datetime import date
 from datetime import datetime
@@ -129,4 +130,28 @@ def lesson_list(cur_data: List[str]):
 
     keyboard.add(InlineKeyboardButton(templates.BTN_OPEN_CALENDAR, callback_data='|'.join(cur_data[:-1])))
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-3])))
+    return keyboard
+
+
+def teacher_list(cur_data: List[str]):
+    '''Последним элементом обязательно должен быть номер страницы'''
+    page = int(cur_data[-1])
+    _teacher_list = ControllerFactory.teacher().get_all()
+    _page_size = 10
+    _page_count = ceil(len(_teacher_list) / float(_page_size))
+
+    keyboard = InlineKeyboardMarkup()
+
+    for index in range((page - 1) * _page_size, (page - 1) * _page_size + _page_size):
+        if index >= len(_teacher_list):
+            break
+        keyboard.add(InlineKeyboardButton(_teacher_list[index].name, callback_data=f'teacher|{page}|{_teacher_list[index].id}'))
+
+    data_str_page = '|'.join(cur_data[:-1])
+    keyboard.row(
+        InlineKeyboardButton(templates.BTN_PREV_PAGE, callback_data=f'{data_str_page}|{page - 1 if page > 1 else 1}'),
+        InlineKeyboardButton(f'{page} из {_page_count}', callback_data=f'{data_str_page}|{page}'),
+        InlineKeyboardButton(templates.BTN_NEXT_PAGE, callback_data=f'{data_str_page}|{page + 1 if page < _page_count else page}')
+    )
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
     return keyboard
