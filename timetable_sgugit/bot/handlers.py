@@ -140,13 +140,18 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
         markup = markups.lesson_list(data)
 
     elif len(data) == 6: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>
-        message = templates.MESSAGE_SELECT_DAY
-        # message = ''
-        markup = markups.calendar_markup(data)
+        data.append('1')
+        message = _build_lesson_group_list(data)
+        markup = markups.lesson_list(data)
 
     elif len(data) == 7: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>|<D>
         message = _build_lesson_group_list(data)
         markup = markups.lesson_list(data)
+    
+    elif len(data) == 8: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>|<D>|calendar
+        message = templates.MESSAGE_SELECT_DAY
+        markup = markups.calendar_markup(data)
+
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
@@ -158,21 +163,30 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
     markup = None
 
     if len(data) == 1:
-            data.append(1)
+            data.append('1')
 
     if len(data) == 2: # 'teacher|<P>'
         message = templates.MESSAGE_SELECT_TEACHER
         markup = markups.teacher_list(data)
+
     elif len(data) == 3: # 'teacher|<P>|<T>'
         data.extend(date.today().strftime('%m.%Y|%d').split('|'))
         message = _build_lesson_teacher_list(data)
         markup = markups.lesson_list(data)
+
     elif len(data) == 4: # 'teacher|<P>|<T>|<M>.<Y>'
-        message = templates.MESSAGE_SELECT_DAY
-        markup = markups.calendar_markup(data)
+        data.append('1')
+        message = _build_lesson_teacher_list(data)
+        markup = markups.lesson_list(data)
+
     elif len(data) == 5: # 'teacher|<P>|<T>|<M>.<Y>|<D>'
         message = _build_lesson_teacher_list(data)
         markup = markups.lesson_list(data)
+
+    elif len(data) == 6: # 'teacher|<P>|<T>|<M>.<Y>|<D>|calendar'
+        message = templates.MESSAGE_SELECT_DAY
+        markup = markups.calendar_markup(data)
+
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)

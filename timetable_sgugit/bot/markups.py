@@ -83,11 +83,11 @@ def group_list(cur_data: List[str]):
 
 
 def calendar_markup(cur_data: List[str]):
-    '''Последний аргумент должен быть месяцем и годом в формате ДД.ММ'''
-    month = int(cur_data[-1].split('.')[0])
-    year = int(cur_data[-1].split('.')[1])
+    '''Последние аргументы должны быть следующими: [ "<M>.<Y>", "<D>", "<SOME_STR>" ] '''
+    month = int(cur_data[-3].split('.')[0])
+    year = int(cur_data[-3].split('.')[1])
 
-    cur_data_str = '|'.join(cur_data[:-1])
+    cur_data_str = '|'.join(cur_data[:-3])
 
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton(f'{MONTHS_LIST[month - 1]} - {year} г.', callback_data=f'empty'))
@@ -105,17 +105,21 @@ def calendar_markup(cur_data: List[str]):
             ]
         )
 
-    _prev_data_str = '|'.join(cur_data[:-1])
+    _prev_date_str = cur_data.copy()
+    _prev_date_str[-3] = get_prev_month(month, year)
+    _next_date_str = cur_data.copy()
+    _next_date_str[-3] = get_next_month(month, year)
+    # _prev_data_str = '|'.join(cur_data[:-3])
     keyboard.row(
-        InlineKeyboardButton(templates.BTN_PREV_MONTH, callback_data=f'{_prev_data_str}|{get_prev_month(month, year)}'),
-        InlineKeyboardButton(templates.BTN_NEXT_MONTH, callback_data=f'{_prev_data_str}|{get_next_month(month, year)}')
+        InlineKeyboardButton(templates.BTN_PREV_MONTH, callback_data='|'.join(_prev_date_str)),
+        InlineKeyboardButton(templates.BTN_NEXT_MONTH, callback_data='|'.join(_next_date_str)),
     )
-    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data=_prev_data_str))
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-1])))
     return keyboard
 
 
 def lesson_list(cur_data: List[str]):
-    # cur_data_str = '|'.join(cur_data[:-1])
+    cur_data_str = '|'.join(cur_data)
     keyboard = InlineKeyboardMarkup()
 
     _date = datetime.strptime(f'{cur_data[-1]}.{cur_data[-2]}', '%d.%m.%Y').date()
@@ -128,7 +132,7 @@ def lesson_list(cur_data: List[str]):
         InlineKeyboardButton(templates.BTN_NEXT_DAY, callback_data=f'{_day_switch_data}|{_next_day.strftime("%m.%Y|%d")}'),
     )
 
-    keyboard.add(InlineKeyboardButton(templates.BTN_OPEN_CALENDAR, callback_data='|'.join(cur_data[:-1])))
+    keyboard.add(InlineKeyboardButton(templates.BTN_OPEN_CALENDAR, callback_data=f'{cur_data_str}|calendar'))
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-3])))
     return keyboard
 
