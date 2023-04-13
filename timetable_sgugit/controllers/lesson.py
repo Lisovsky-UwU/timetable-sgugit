@@ -54,5 +54,5 @@ class LessonDBController:
                     lesson_name = lesson.lesson_name_db.name,
                     date        = lesson.date
                 )
-                for lesson in service.get_by_filter(group, audience, teacher, date)
+                for lesson in sorted(service.get_by_filter(group, audience, teacher, date), key=lambda l: l.hour)
             )
