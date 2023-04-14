@@ -19,6 +19,16 @@ class AudienceDBController:
             return service.get_all()
 
 
+    def get(self, building: int) -> List[Audience]:
+        with self.service_type() as service:
+            return service.get_by_building(building)
+
+
+    def get_by_id(self, id: int):
+        with self.service_type() as service:
+            return service.get_by_id(id)
+
+
     @lru_cache(maxsize=None)
     def create_if_not_exists(self, name: str) -> Audience:
         with self.service_type() as service:
