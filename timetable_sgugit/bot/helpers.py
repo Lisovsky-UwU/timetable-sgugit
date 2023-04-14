@@ -14,10 +14,10 @@ from ..constants import WEEKDAYS_TEXT
 
 
 def build_lesson_group_list(data: List[str]) -> str:
-    month = f'{data[5][:2]}.{data[5][-2:]}'
-    group_id = int(data[4])
+    month = f'{data[-2][:2]}.{data[-2][-2:]}'
+    group_id = int(data[-3])
     lesson_list = ControllerFactory.lesson().get(
-        group = group_id, date = f'{data[6]}.{month}'
+        group = group_id, date = f'{data[-1]}.{month}'
     )
     group = ControllerFactory.group().get_by_id(group_id)
     
@@ -33,10 +33,10 @@ def build_lesson_group_list(data: List[str]) -> str:
         for lesson in lesson_list
     )
 
-    _select_day = datetime.strptime(f'{data[6]}.{data[5]}', '%d.%m.%Y').date()
+    _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
     return templates.MESSAGE_GROUP_LESSON_LIST.format(
         group.name,
-        f'{data[6]}.{data[5]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
+        f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
         get_week_number(_select_day),
         list_lesson_str if len(lesson_list) != 0 else templates.NO_LESSON_ON_DAY
     )
