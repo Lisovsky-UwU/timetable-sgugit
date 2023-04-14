@@ -3,6 +3,7 @@ from typing import List
 from typing import Iterable
 from typing import Optional
 
+from ..constants import HOURS_TYPE
 from ..services import LessonDBService
 from ..models import LessonAddRequest
 from ..models import LessonInfoModel
@@ -43,7 +44,7 @@ class LessonDBController:
         date: Optional[str] = None,
     ) -> List[LessonInfoModel]:
         with self.service_type() as service:
-            return list(
+            lesson_list = list(
                 LessonInfoModel(
                     id          = lesson.id,
                     hour        = lesson.hour,
@@ -56,3 +57,22 @@ class LessonDBController:
                 )
                 for lesson in sorted(service.get_by_filter(group, audience, teacher, date), key=lambda l: l.hour)
             )
+
+            # Сломается, если в однов время занятия будут в разных аудиториях
+            # отобразится только первая аудитория для всех групп
+            # Но такого в расписании (вроде) не бывает
+            result = list()
+            for hour in HOURS_TYPE:
+                _lessons = list(filter(lambda l: l.hour == hour, lesson_list))
+                if len(_lessons) == 1:
+                    result.append(_lessons[0])
+
+                elif len(_lessons) > 1:
+                    r_lesson = _lessons[0]
+                    for lesson in _lessons[1:]:
+                        if lesson.group not in r_lesson.group:
+                            r_lesson.group += f', {lesson.group}'
+
+                    result.append(r_lesson)
+            
+            return result
