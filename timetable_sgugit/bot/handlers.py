@@ -114,8 +114,14 @@ def _build_lesson_teacher_list(data: List[str]) -> str:
     )
 
 
-def _search_teacher(message: types.Message, bot: TeleBot, data: List[str]):
+def _search_teacher(
+    message: types.Message, 
+    menu_message_id: int,
+    bot: TeleBot, 
+    data: List[str], 
+):
     data.extend([ message.text, '1' ]) # Добавляем в данные сообщение для поиска и номер страницы
+    bot.delete_message(message.chat.id, menu_message_id)
     bot.send_message(
         message.chat.id,
         templates.MESSAGE_SELECT_TEACHER, 
@@ -191,7 +197,7 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
                 callback.message.id, 
                 reply_markup = markups.cancle(data)
             )
-            bot.register_next_step_handler(msg, _search_teacher, bot = bot, data = data)
+            bot.register_next_step_handler(msg, _search_teacher, menu_message_id=callback.message.id, bot=bot, data=data)
             return
         
         elif len(data) == 4 and data[-1] == 'cancle': # 'teacher|<P>|search|cancle'
