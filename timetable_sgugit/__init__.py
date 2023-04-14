@@ -3,6 +3,7 @@ from .services import AudienceDBService
 from .services import TeacherDBService
 from .services import LessonDBService
 from .services import GroupDBService
+from .services import UserDBService
 from .factory import ControllerFactory
 from .utils import create_db
 from .log import init_logger
@@ -14,6 +15,7 @@ def start():
         init_logger()
         create_db()
         
+        ControllerFactory.user_service_type = UserDBService
         ControllerFactory.group_service_type = GroupDBService
         ControllerFactory.lesson_service_type = LessonDBService
         ControllerFactory.teacher_service_type = TeacherDBService

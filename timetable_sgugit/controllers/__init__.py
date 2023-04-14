@@ -1,3 +1,4 @@
+from .user import UserDBController
 from .group import GroupDBController
 from .lesson import LessonDBController
 from .teacher import TeacherDBController
