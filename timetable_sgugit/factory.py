@@ -55,5 +55,6 @@ class ControllerFactory:
             cls.group(),
             cls.lesson(),
             cls.teacher(),
-            cls.lesson_name()
+            cls.audience(),
+            cls.lesson_name(),
         )

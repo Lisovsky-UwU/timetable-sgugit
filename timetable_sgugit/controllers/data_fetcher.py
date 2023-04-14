@@ -5,11 +5,13 @@ from loguru import logger
 from . import GroupDBController
 from . import LessonDBController
 from . import TeacherDBController
+from . import AudienceDBController
 from . import LessonNameDBController
 from ..parser import SgugitWebParser
 from ..models import LessonAddRequest
 from ..models import LessonParseResult
 from ..models import GroupCreateRequest
+from ..models import AudienceCreateRequest
 from ..constants import REVERS_LESSON_TYPE
 from ..constants import EDUCATION_FORMS
 from ..constants import INSTITUTS
@@ -24,21 +26,49 @@ class DataFetcher:
         group_controller: GroupDBController,
         lesson_controller: LessonDBController,
         teacher_controller: TeacherDBController,
+        audience_controller: AudienceDBController,
         lesson_name_controller: LessonNameDBController,
     ):
         self._parser = parser
         self._group_controller = group_controller
         self._lesson_controller = lesson_controller
         self._teacher_controller = teacher_controller
+        self._audience_controller = audience_controller
         self._lesson_name_controller = lesson_name_controller
 
     
+    def fetch_all(self):
+        logger.info('Фетчим все данные')
+        self.fetch_teachers()
+        self.fetch_audiences()
+        self.fetch_groups()
+        self.fetch_lessons()
+        logger.success('Все данные успешно зафетчины')
+
+
     def fetch_teachers(self):
         logger.info('Фетчим преподавателей')
         data = self._parser.parse_teachers()
         logger.info('Данные по предователям получены, загружаем в БД')
         self._teacher_controller.fill_for_iter(data)
         logger.success('Данные по предователям загружены в БД')
+
+
+    def fetch_audiences(self):
+        logger.info('Фетчим аудитории')
+        add_list: List[AudienceCreateRequest] = list()
+        for _key, _list in self._parser.parse_audiences().items():
+            add_list.extend(
+                AudienceCreateRequest(
+                    name     = data,
+                    building = _key,
+                )
+                for data in sorted(_list)
+            )
+
+        logger.info('Данные по аудитория получены, загружаем в БД')
+        self._audience_controller.fill_for_iter(add_list)
+        logger.success('Данные по аудиториям успешно загружены в БД')
 
 
     def fetch_groups(self):
@@ -84,7 +114,7 @@ class DataFetcher:
                     LessonAddRequest(
                         hour_id        = lesson.hour ,
                         lesson_type_id = REVERS_LESSON_TYPE[lesson.lesson_type],
-                        audience       = lesson.audience,
+                        audience       = self._audience_controller.create_if_not_exists(lesson.audience).id,
                         group_id       = group_db.id,
                         teacher_id     = self._teacher_controller.create_if_not_exists(lesson.teacher).id,
                         lesson_name_id = self._lesson_name_controller.create_if_not_exists(lesson.lesson_name).id,

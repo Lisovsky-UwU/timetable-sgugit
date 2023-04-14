@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from typing import List
+from typing import Dict
 from loguru import logger
 
 from .models import LessonParseResult
@@ -19,6 +20,23 @@ class SgugitWebParser:
             teacher.text.strip()
             for teacher in page.find('div', 'card_teachers').find_all('a')
         )
+
+
+    def parse_audiences(self) -> Dict[int, str]:
+        logger.debug('Запрос страницы с аудиториями')
+        url = 'https://sgugit.ru/raspisanie/audience/'
+        response = requests.get(url)
+        page = BeautifulSoup(response.text, "html.parser")
+
+        logger.debug('Парсинг страницы с аудиториями')
+        result = dict()
+        for index, au_card in enumerate(page.find_all('div', 'card_links')):
+            result[index] = list(
+                audience.text.strip()
+                for audience in au_card.find_all('a')
+            )
+        
+        return result
 
 
     def parse_lessons(self, url: str) -> List[LessonParseResult]:
