@@ -21,3 +21,4 @@ from .audience import Audience
 from .teacher import Teacher
 from .lesson import Lesson
 from .group import Group
+from .user import User
