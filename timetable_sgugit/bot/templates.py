@@ -29,6 +29,13 @@ MESSAGE_SELECT_BUILDING = 'Выберите корпус'
 MESSAGE_SELECT_AUDIENCE = 'Выберите аудиторию'
 MESSAGE_SELECT_TEACHER = 'Выберите преподавателя'
 MESSAGE_SEARCH_TEACHER = 'Отправте сообщение для поиска'
+MESSAGE_SELECT_FAVORITE = 'Выберите что-то из своего избранного'
+
+
+PREFIX_GROUP = 'Группа '
+PREFIX_TEACHER = ''
+PREFIX_AUDIENCE = 'Аудитория '
+
 
 MESSAGE_GROUP_LESSON_LIST = '''
 Группа {}

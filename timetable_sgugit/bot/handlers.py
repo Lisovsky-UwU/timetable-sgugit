@@ -54,7 +54,6 @@ def main_menu_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 def group_interface(
     callback: types.CallbackQuery, 
-    bot: TeleBot,
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.ReplyKeyboardMarkup]:
@@ -92,7 +91,6 @@ def group_interface(
 
 def teacher_interface(
     callback: types.CallbackQuery, 
-    bot: TeleBot,
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.InlineKeyboardButton]:
@@ -130,7 +128,6 @@ def teacher_interface(
 
 def audience_interface(
     callback: types.CallbackQuery, 
-    bot: TeleBot,
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.ReplyKeyboardMarkup]:
@@ -183,7 +180,7 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
         message, markup = templates.MESSAGE_SELECT_GROUP, markups.group_list(data)
 
     if len(data) >= 5: # 'group|<I>|<F>|<C>|<G>|...'
-        message, markup = group_interface(callback, bot, data, data[4:])
+        message, markup = group_interface(callback, data, data[4:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
@@ -224,7 +221,7 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
                 message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
 
     if message is None and len(data) >= 2:
-        message, markup = teacher_interface(callback, bot, data, data[2:])
+        message, markup = teacher_interface(callback, data, data[2:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
@@ -241,14 +238,37 @@ def audience_callback(callback: types.CallbackQuery, bot: TeleBot):
         message, markup = templates.MESSAGE_SELECT_AUDIENCE, markups.audience_list(data)
     
     if len(data) > 2: # 'audience|<B>|...'
-        message, markup = audience_interface(callback, bot, data, data[2:])
+        message, markup = audience_interface(callback, data, data[2:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def favorite_callback(callback: types.CallbackQuery, bot: TeleBot):
-    ...
+    data = callback.data.split('|') # 'favorite|...'
+    message, markup = None, None
+
+    if len(data) == 2: # 'favorite|<T>'
+        data.pop(len(data) - 1)
+
+    if len(data) == 1: # 'favorite'
+        message = templates.MESSAGE_SELECT_FAVORITE
+        markup = markups.favorite_list(
+            ControllerFactory.user().get(callback.message.chat.id).get_list_favorites()
+        )
+
+    if len(data) > 2: # 'favorite|<T>|<I>|...'
+        if data[1] == 'G':
+            message, markup = group_interface(callback, data, data[2:])
+
+        if data[1] == 'T':
+            message, markup = teacher_interface(callback, data, data[2:])
+
+        if data[1] == 'A':
+            message, markup = audience_interface(callback, data, data[2:])
+
+    if message:
+        bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def feedback_callback(callback: types.CallbackQuery, bot: TeleBot):

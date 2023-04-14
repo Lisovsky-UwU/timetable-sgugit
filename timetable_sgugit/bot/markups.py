@@ -1,6 +1,6 @@
 from math import ceil
 from typing import List
-from datetime import date
+from typing import Tuple
 from datetime import datetime
 from datetime import timedelta
 from calendar import Calendar
@@ -209,4 +209,23 @@ def audience_list(cur_data: List[str]):
 
     keyboard.row(*keys_row)
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-1])))
+    return keyboard
+
+
+def favorite_list(favorite_list: List[Tuple[str, str]]):
+    keyboard = InlineKeyboardMarkup()
+
+    for el_fav in favorite_list:
+        if el_fav[0] == 'G': # Группа
+            _btn_text = f'{templates.PREFIX_GROUP}{ControllerFactory.group().get_by_id(int(el_fav[1])).name}'
+
+        elif el_fav[0] == 'T': # Препод
+            _btn_text = f'{templates.PREFIX_TEACHER}{ControllerFactory.teacher().get_by_id(int(el_fav[1])).name}'
+
+        elif el_fav[0] == 'A': # Аудитория
+            _btn_text = f'{templates.PREFIX_AUDIENCE}{ControllerFactory.audience().get_by_id(int(el_fav[1])).name}'
+
+        keyboard.add(InlineKeyboardButton(_btn_text, callback_data=f'favorite|{el_fav[0]}|{el_fav[1]}'))
+
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
     return keyboard
