@@ -114,6 +114,19 @@ def _build_lesson_teacher_list(data: List[str]) -> str:
     )
 
 
+def _search_teacher(message: types.Message, bot: TeleBot, data: List[str]):
+    data.extend([ message.text, '1' ]) # Добавляем в данные сообщение для поиска и номер страницы
+    bot.send_message(
+        message.chat.id,
+        templates.MESSAGE_SELECT_TEACHER, 
+        reply_markup=markups.teacher_list(
+            data,
+            ControllerFactory.teacher().search_by_name(message.text),
+            False
+        )
+    )
+
+
 def group_callback(callback: types.CallbackQuery, bot: TeleBot):
     data = callback.data.split('|')
     message = None
@@ -168,6 +181,33 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
     if len(data) == 2: # 'teacher|<P>'
         message = templates.MESSAGE_SELECT_TEACHER
         markup = markups.teacher_list(data)
+
+    elif data[2] == 'search': # 'teacher|<`P>|search...'
+
+        if len(data) == 3: # 'teacher|<P>|search'
+            msg = bot.edit_message_text(
+                templates.MESSAGE_SEARCH_TEACHER, 
+                callback.message.chat.id, 
+                callback.message.id, 
+                reply_markup = markups.cancle(data)
+            )
+            bot.register_next_step_handler(msg, _search_teacher, bot = bot, data = data)
+            return
+        
+        elif len(data) == 4 and data[-1] == 'cancle': # 'teacher|<P>|search|cancle'
+            bot.clear_step_handler_by_chat_id(callback.message.chat.id)
+            data = data[:2]
+            message = templates.MESSAGE_SELECT_TEACHER
+            markup = markups.teacher_list(data)
+        
+        elif len(data) == 4: # 'teacher|<P>|search|<S>'
+            data.append('1')
+            message = templates.MESSAGE_SELECT_TEACHER
+            markup = markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
+        
+        elif len(data) == 5: # 'teacher|<P>|search|<S>|<P2>'
+            message = templates.MESSAGE_SELECT_TEACHER
+            markup = markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
 
     elif len(data) == 3: # 'teacher|<P>|<T>'
         data.extend(date.today().strftime('%m.%Y|%d').split('|'))

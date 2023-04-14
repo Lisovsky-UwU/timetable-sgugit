@@ -16,6 +16,7 @@ from ..constants import WEEKDAY_LIST
 from ..constants import EDUCATION_FORMS
 from ..utils import get_next_month
 from ..utils import get_prev_month
+from ..orm import Teacher
 
 
 def main_menu_markup():
@@ -138,25 +139,39 @@ def lesson_list(cur_data: List[str]):
     return keyboard
 
 
-def teacher_list(cur_data: List[str]):
+def teacher_list(
+    cur_data: List[str], 
+    teacher_list: List[Teacher] = None,
+    show_search: bool = True
+):
     '''Последним элементом обязательно должен быть номер страницы'''
     page = int(cur_data[-1])
-    _teacher_list = ControllerFactory.teacher().get_all()
+    if teacher_list is None: teacher_list = ControllerFactory.teacher().get_all()
+    
     _page_size = 10
-    _page_count = ceil(len(_teacher_list) / float(_page_size))
+    _page_count = ceil(len(teacher_list) / float(_page_size))
 
     keyboard = InlineKeyboardMarkup()
 
     for index in range((page - 1) * _page_size, (page - 1) * _page_size + _page_size):
-        if index >= len(_teacher_list):
+        if index >= len(teacher_list):
             break
-        keyboard.add(InlineKeyboardButton(_teacher_list[index].name, callback_data=f'teacher|{page}|{_teacher_list[index].id}'))
+        keyboard.add(InlineKeyboardButton(teacher_list[index].name, callback_data=f'teacher|{cur_data[1]}|{teacher_list[index].id}'))
 
-    data_str_page = '|'.join(cur_data[:-1])
-    keyboard.row(
-        InlineKeyboardButton(templates.BTN_PREV_PAGE, callback_data=f'{data_str_page}|{page - 1 if page > 1 else 1}'),
-        InlineKeyboardButton(f'{page} из {_page_count}', callback_data=f'{data_str_page}|{page}'),
-        InlineKeyboardButton(templates.BTN_NEXT_PAGE, callback_data=f'{data_str_page}|{page + 1 if page < _page_count else page}')
-    )
+    if _page_count > 1:
+        data_str_page = '|'.join(cur_data[:-1])
+        keyboard.row(
+            InlineKeyboardButton(templates.BTN_PREV_PAGE, callback_data=f'{data_str_page}|{page - 1 if page > 1 else 1}'),
+            InlineKeyboardButton(f'{page} из {_page_count}', callback_data=f'{data_str_page}|{page}'),
+            InlineKeyboardButton(templates.BTN_NEXT_PAGE, callback_data=f'{data_str_page}|{page + 1 if page < _page_count else page}')
+        )
+
+    if show_search: keyboard.add(InlineKeyboardButton(templates.BTN_SEARCH, callback_data=f'{data_str_page}|{page}|search'))
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
+    return keyboard
+
+
+def cancle(cur_data: List[str]):
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(templates.BTN_CANCLE, callback_data=f'{"|".join(cur_data)}|cancle'))
     return keyboard
