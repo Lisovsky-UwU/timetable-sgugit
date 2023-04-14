@@ -16,6 +16,7 @@ BTN_SEARCH = 'Поиск'
 BTN_CANCLE = 'Отмена'
 BTN_MAIN_MENU = 'Главное меню'
 BTN_ADD_FAVORITE = 'Добавить в избранное'
+BTN_DEL_FAVORITE = 'Удалить из избранного'
 
 
 MESSAGE_MAIN_MENU = 'Выберите раздел'

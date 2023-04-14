@@ -120,7 +120,7 @@ def calendar_markup(cur_data: List[str]):
     return keyboard
 
 
-def lesson_list(cur_data: List[str]):
+def lesson_list(cur_data: List[str], chat_id: int, type_data: str):
     cur_data_str = '|'.join(cur_data)
     keyboard = InlineKeyboardMarkup()
 
@@ -135,6 +135,12 @@ def lesson_list(cur_data: List[str]):
     )
 
     keyboard.add(InlineKeyboardButton(templates.BTN_OPEN_CALENDAR, callback_data=f'{cur_data_str}|calendar'))
+
+    if type_data not in ControllerFactory.user().get(chat_id).favorites:
+        keyboard.add(InlineKeyboardButton(templates.BTN_ADD_FAVORITE, callback_data=f'{cur_data_str}|favorite|add'))
+    else:
+        keyboard.add(InlineKeyboardButton(templates.BTN_DEL_FAVORITE, callback_data=f'{cur_data_str}|favorite|del'))
+    
     keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_MENU, callback_data=f'main_menu'))
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-3])))
     return keyboard
