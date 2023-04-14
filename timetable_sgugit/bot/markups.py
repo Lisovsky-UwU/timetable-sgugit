@@ -133,6 +133,7 @@ def lesson_list(cur_data: List[str]):
     )
 
     keyboard.add(InlineKeyboardButton(templates.BTN_OPEN_CALENDAR, callback_data=f'{cur_data_str}|calendar'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_MENU, callback_data=f'main_menu'))
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-3])))
     return keyboard
 

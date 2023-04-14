@@ -12,6 +12,8 @@ BTN_NEXT_PAGE = 'След. страница'
 BTN_PREV_PAGE = 'Пред. страница'
 
 BTN_BACK = 'Назад'
+BTN_MAIN_MENU = 'Главное меню'
+BTN_ADD_FAVORITE = 'Добавить в избранное'
 
 
 MESSAGE_MAIN_MENU = 'Выберите раздел'
