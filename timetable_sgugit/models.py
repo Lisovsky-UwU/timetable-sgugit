@@ -5,7 +5,7 @@ class LessonAddRequest(BaseModel):
 
     hour_id        : int
     lesson_type_id : int
-    audience       : str
+    audience       : int
     group_id       : int
     teacher_id     : int
     lesson_name_id : int
@@ -30,6 +30,12 @@ class GroupCreateRequest(BaseModel):
     course         : int
     institute      : int
     education_form : int
+
+
+class AudienceCreateRequest(BaseModel):
+
+    name     : str
+    building : int
 
 
 class LessonInfoModel(BaseModel):

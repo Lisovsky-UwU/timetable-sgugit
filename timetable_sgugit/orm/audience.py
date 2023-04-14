@@ -12,5 +12,6 @@ class Audience(Base):
 
     id         = Column(Integer, primary_key=True, autoincrement=True)
     name       = Column(String, nullable=False)
+    building   = Column(Integer, nullable=False)
 
     lessons_db = relationship('Lesson', back_populates='audience_db', uselist=True)

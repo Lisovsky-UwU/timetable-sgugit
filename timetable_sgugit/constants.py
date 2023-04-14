@@ -51,6 +51,12 @@ EDUCATION_FORMS = {
 }
 
 
+BUILDINGS = {
+    0: 'Основной',
+    1: 'Лабораторный',
+}
+
+
 BOT_TOKEN = '5993068182:AAHBBY9rXcyJBM2nwGq--mS6ie7fe_t6bUU'
 
 
