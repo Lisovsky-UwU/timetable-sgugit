@@ -22,7 +22,7 @@ class SgugitWebParser:
         )
 
 
-    def parse_audiences(self) -> Dict[int, str]:
+    def parse_audiences(self) -> Dict[int, List[str]]:
         logger.debug('Запрос страницы с аудиториями')
         url = 'https://sgugit.ru/raspisanie/audience/'
         response = requests.get(url)

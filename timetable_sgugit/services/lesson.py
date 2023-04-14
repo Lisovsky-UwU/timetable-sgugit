@@ -11,7 +11,7 @@ class LessonDBService(BaseService[Lesson]):
     def get_by_filter(
         self,
         group: Optional[int] = None,
-        audience: Optional[str] = None,
+        audience: Optional[int] = None,
         teacher: Optional[int] = None,
         date: Optional[str] = None,
     ) -> List[Lesson]:

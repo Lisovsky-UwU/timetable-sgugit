@@ -58,12 +58,21 @@ class DataFetcher:
         logger.info('Фетчим аудитории')
         add_list: List[AudienceCreateRequest] = list()
         for _key, _list in self._parser.parse_audiences().items():
+            _temp = list()
+            for el in _list.copy():
+                if not el.isdigit():
+                    _temp.append(el)
+                    _list.remove(el)
+            
+            _list.sort(key=lambda x: int(x))
+            _list.extend(sorted(_temp))
+            
             add_list.extend(
                 AudienceCreateRequest(
                     name     = data,
                     building = _key,
                 )
-                for data in sorted(_list)
+                for data in _list
             )
 
         logger.info('Данные по аудитория получены, загружаем в БД')

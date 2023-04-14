@@ -39,7 +39,7 @@ class LessonDBController:
     def get(
         self,
         group: Optional[int] = None,
-        audience: Optional[str] = None,
+        audience: Optional[int] = None,
         teacher: Optional[int] = None,
         date: Optional[str] = None,
     ) -> List[LessonInfoModel]:
