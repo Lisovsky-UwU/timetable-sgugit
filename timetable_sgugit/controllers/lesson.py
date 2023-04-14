@@ -49,7 +49,7 @@ class LessonDBController:
                     id          = lesson.id,
                     hour        = lesson.hour,
                     lesson_type = lesson.lesson_type,
-                    audience    = lesson.audience,
+                    audience    = lesson.audience_db.name,
                     group       = lesson.group_db.name,
                     teacher     = lesson.teacher_db.name,
                     lesson_name = lesson.lesson_name_db.name,
