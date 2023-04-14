@@ -26,6 +26,12 @@ class TeacherDBController:
             return data
 
 
+    def search_by_name(self, name: str) -> List[Teacher]:
+        name = name.lower().title()
+        with self.service_type() as service:
+            return service.search_by_name(name)
+
+
     def get_all(self) -> List[Teacher]:
         with self.service_type() as service:
             return service.get_all()
