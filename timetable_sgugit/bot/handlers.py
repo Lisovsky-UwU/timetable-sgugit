@@ -3,6 +3,8 @@ from datetime import date
 from telebot import types
 from telebot import TeleBot
 from loguru import logger
+from typing import Tuple
+from typing import List
 
 from . import MessageHandler
 from . import CallbackHandler
@@ -49,127 +51,136 @@ def main_menu_callback(callback: types.CallbackQuery, bot: TeleBot):
     )
 
 
-def group_callback(callback: types.CallbackQuery, bot: TeleBot):
-    data = callback.data.split('|')
-    message = None
-    markup = None
-    if len(data) == 1: # 'group'
-        message = templates.MESSAGE_SELECT_INSTITUTE
-        markup  = markups.institute()
+def group_interface(data: List[str], interface_data: List[str]) -> Tuple[str, types.ReplyKeyboardMarkup]:
+    if len(interface_data) == 0: # ''
+        return templates.MESSAGE_SELECT_INSTITUTE, markups.institute()
 
-    if len(data) == 2: # 'group|<I>'
-        message = templates.MESSAGE_SELECT_FORM
-        markup = markups.education_forms(data)
+    if len(interface_data) == 1: # '<I>'
+        return templates.MESSAGE_SELECT_FORM, markups.education_forms(data)
 
-    if len(data) == 3: # 'group|<I>|<F>'
-        message = templates.MESSAGE_SELECT_COURSE
-        markup = markups.course(data)
+    if len(interface_data) == 2: # '<I>|<F>'
+        return templates.MESSAGE_SELECT_COURSE, markups.course(data)
 
-    if len(data) == 4: # 'group|<I>|<F>|<C>
-        message = templates.MESSAGE_SELECT_GROUP
-        markup = markups.group_list(data)
+    if len(interface_data) == 3: # '<I>|<F>|<C>
+        return templates.MESSAGE_SELECT_GROUP, markups.group_list(data)
 
-    if len(data) == 5: # 'group|<I>|<F>|<C>|<G>|
-        data.extend(date.today().strftime('%m.%Y|%d').split('|'))
+    if len(interface_data) == 4: # '<I>|<F>|<C>|<G>
+        _tmp = date.today().strftime('%m.%Y|%d').split('|')
+        data.extend(_tmp)
+        interface_data.extend(_tmp)
 
-    if len(data) == 6: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>
+    if len(interface_data) == 5: # '<I>|<F>|<C>|<G>|<M>.<Y>
         data.append('1')
+        interface_data.append('1')
 
-    if len(data) == 7: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>|<D>
-        message = helpers.build_lesson_group_list(data)
-        markup = markups.lesson_list(data)
+    if len(interface_data) == 6: # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>
+        return helpers.build_lesson_group_list(data), markups.lesson_list(data)
+
+    if len(interface_data) == 7: # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|calendar
+        return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+
+    return None, None
+
+
+def teacher_interface(
+    callback: types.CallbackQuery, 
+    bot: TeleBot,
+    data: List[str], 
+    interface_data: List[str]
+) -> Tuple[str, types.InlineKeyboardButton]:
+    if len(interface_data) == 0:
+        data.append('1')
+        interface_data.append('1')
+
+    if len(interface_data) == 1: # '<P>'
+        return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+
+    if len(interface_data) >= 2: # '<P>|...'
+        if interface_data[1] == 'search': # '<P>|search...'
+            if len(interface_data) == 2: # '<P>|search'
+                msg = bot.edit_message_text(
+                    templates.MESSAGE_SEARCH_TEACHER,
+                    callback.message.chat.id,
+                    callback.message.id,
+                    reply_markup = markups.cancle(data)
+                )
+                bot.register_next_step_handler(msg, helpers.search_teacher, menu_message_id=callback.message.id, bot=bot, data=data)
+                return None, None
+            
+            if len(interface_data) == 3: # '<P>|search|...'
+                if interface_data[-1] == 'cancle': # '<P>|search|cancle'
+                    bot.clear_step_handler_by_chat_id(callback.message.chat.id)
+                    data = data[:-2]
+                    return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+            
+                else: # '<P>|search|<S>'
+                    data.append('1')
+            
+            if len(interface_data) == 4: # '<P>|search|<S>|<P2>'
+                return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
+        
+        elif len(interface_data) == 2: # '<P>|<T>'
+            _tmp = date.today().strftime('%m.%Y|%d').split('|')
+            data.extend(_tmp)
+            interface_data.extend(_tmp)
+
+    if len(interface_data) == 3: # '<P>|<T>|<M>.<Y>'
+        data.append('1')
+        interface_data.append('1')
+
+    if len(interface_data) == 4: # '<P>|<T>|<M>.<Y>|<D>'
+        return helpers.build_lesson_teacher_list(data), markups.lesson_list(data)
+
+    if len(interface_data) == 5: # '<P>|<T>|<M>.<Y>|<D>|calendar'
+        return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+
+    return None, None
+
+
+def audience_interface(data: List[str], interface_data: List[str]) -> Tuple[str, types.ReplyKeyboardMarkup]:
+    if len(interface_data) == 0: # ''
+        return templates.MESSAGE_SELECT_BUILDING, markups.buildings(data)
     
-    if len(data) == 8: # 'group|<I>|<F>|<C>|<G>|<M>.<Y>|<D>|calendar
-        message = templates.MESSAGE_SELECT_DAY
-        markup = markups.calendar_markup(data)
+    if len(interface_data) == 1: # '<B>'
+        return templates.MESSAGE_SELECT_AUDIENCE, markups.audience_list(data)
+
+    if len(interface_data) == 2: # '<B>|<A>'
+        _tmp = date.today().strftime('%m.%Y|%d').split('|')
+        data.extend(_tmp)
+        interface_data.extend(_tmp)
+
+    if len(interface_data) == 3: # '<B>|<A>|<M>.<Y>'
+        data.append('01')
+        interface_data.append('01')
+    
+    if len(interface_data) == 4: # '<B>|<A>|<M>.<Y>|<D>'
+        return helpers.build_lesson_audience_list(data), markups.lesson_list(data)
+
+    if len(interface_data) == 5: # '<B>|<A>|<M>.<Y>|<D>|calendar'
+        return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+    
+    return None, None
+
+
+def group_callback(callback: types.CallbackQuery, bot: TeleBot):
+    data = callback.data.split('|') # 'group|...'
+    message, markup = group_interface(data, data[1:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
-    data = callback.data.split('|')
-    message = None
-    markup = None
-
-    if len(data) == 1:
-            data.append('1')
-
-    if len(data) == 2: # 'teacher|<P>'
-        message = templates.MESSAGE_SELECT_TEACHER
-        markup = markups.teacher_list(data)
-
-    if data[2] == 'search': # 'teacher|<`P>|search...'
-
-        if len(data) == 3: # 'teacher|<P>|search'
-            msg = bot.edit_message_text(
-                templates.MESSAGE_SEARCH_TEACHER, 
-                callback.message.chat.id, 
-                callback.message.id, 
-                reply_markup = markups.cancle(data)
-            )
-            bot.register_next_step_handler(msg, helpers.search_teacher, menu_message_id=callback.message.id, bot=bot, data=data)
-            return
-        
-        elif len(data) == 4 and data[-1] == 'cancle': # 'teacher|<P>|search|cancle'
-            bot.clear_step_handler_by_chat_id(callback.message.chat.id)
-            data = data[:2]
-            message = templates.MESSAGE_SELECT_TEACHER
-            markup = markups.teacher_list(data)
-        
-        elif len(data) == 4: # 'teacher|<P>|search|<S>'
-            data.append('1')
-            message = templates.MESSAGE_SELECT_TEACHER
-            markup = markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
-        
-        elif len(data) == 5: # 'teacher|<P>|search|<S>|<P2>'
-            message = templates.MESSAGE_SELECT_TEACHER
-            markup = markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
-
-    if len(data) == 3: # 'teacher|<P>|<T>'
-        data.extend(date.today().strftime('%m.%Y|%d').split('|'))
-
-    if len(data) == 4: # 'teacher|<P>|<T>|<M>.<Y>'
-        data.append('1')
-
-    if len(data) == 5: # 'teacher|<P>|<T>|<M>.<Y>|<D>'
-        message = helpers.build_lesson_teacher_list(data)
-        markup = markups.lesson_list(data)
-
-    if len(data) == 6: # 'teacher|<P>|<T>|<M>.<Y>|<D>|calendar'
-        message = templates.MESSAGE_SELECT_DAY
-        markup = markups.calendar_markup(data)
+    data = callback.data.split('|') # 'teacher|...'
+    message, markup = teacher_interface(callback, bot, data, data[1:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def audience_callback(callback: types.CallbackQuery, bot: TeleBot):
-    data = callback.data.split('|')
-    message = None
-    markup = None
-
-    if len(data) == 1: # 'audience'
-        message = templates.MESSAGE_SELECT_BUILDING
-        markup = markups.buildings(data)
-    
-    if len(data) == 2: # 'audience|<B>'
-        message = templates.MESSAGE_SELECT_AUDIENCE
-        markup = markups.audience_list(data)
-
-    if len(data) == 3: # 'audience|<B>|<A>'
-        data.extend(date.today().strftime('%m.%Y|%d').split('|'))
-
-    if len(data) == 4: # 'audience|<B>|<A>|<M>.<Y>'
-        data.append('01')
-    
-    if len(data) == 5: # 'audience|<B>|<A>|<M>.<Y>|<D>'
-        message = helpers.build_lesson_audience_list(data)
-        markup = markups.lesson_list(data)
-
-    if len(data) == 6: # 'audience|<B>|<A>|<M>.<Y>|<D>|calendar'
-        message = templates.MESSAGE_SELECT_DAY
-        markup = markups.calendar_markup(data)
+    data = callback.data.split('|') # 'audience|...'
+    message, markup = audience_interface(data, data[1:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
