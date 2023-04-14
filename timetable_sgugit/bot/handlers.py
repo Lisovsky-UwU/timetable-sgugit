@@ -133,6 +133,35 @@ def _search_teacher(
     )
 
 
+def _build_lesson_audience_list(data: List[str]):
+    month = f'{data[-2][:2]}.{data[-2][-2:]}'
+    audience_id = int(data[-3])
+    lesson_list = ControllerFactory.lesson().get(
+        audience = audience_id, date = f'{data[-1]}.{month}'
+    )
+    audience = ControllerFactory.audience().get_by_id(audience_id)
+
+    list_lesson_str = '\n'.join(
+        templates.LESSON_AUDIENCE_INFO.format(
+            lesson.hour + 1,
+            HOURS_TYPE[lesson.hour],
+            lesson.lesson_name,
+            lesson.teacher,
+            lesson.group,
+            LESSON_TYPE[lesson.lesson_type],
+        )
+        for lesson in lesson_list
+    )
+
+    _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
+    return templates.MESSAGE_AUDIENCE_LESSON_LIST.format(
+        audience.name,
+        f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
+        get_week_number(_select_day),
+        list_lesson_str if len(lesson_list) != 0 else templates.NO_LESSON_ON_DAY
+    )
+
+
 def group_callback(callback: types.CallbackQuery, bot: TeleBot):
     data = callback.data.split('|')
     message = None
@@ -239,7 +268,38 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 
 def audience_callback(callback: types.CallbackQuery, bot: TeleBot):
-    ...
+    data = callback.data.split('|')
+    message = None
+    markup = None
+
+    if len(data) == 1: # 'audience'
+        message = templates.MESSAGE_SELECT_BUILDING
+        markup = markups.buildings(data)
+    
+    elif len(data) == 2: # 'audience|<B>'
+        message = templates.MESSAGE_SELECT_AUDIENCE
+        markup = markups.audience_list(data)
+
+    elif len(data) == 3: # 'audience|<B>|<A>'
+        data.extend(date.today().strftime('%m.%Y|%d').split('|'))
+        message = _build_lesson_audience_list(data)
+        markup = markups.lesson_list(data)
+
+    elif len(data) == 4: # 'audience|<B>|<A>|<M>.<Y>'
+        data.append('01')
+        message = _build_lesson_audience_list(data)
+        markup = markups.lesson_list(data)
+    
+    elif len(data) == 5: # 'audience|<B>|<A>|<M>.<Y>|<D>'
+        message = _build_lesson_audience_list(data)
+        markup = markups.lesson_list(data)
+
+    elif len(data) == 6: # 'audience|<B>|<A>|<M>.<Y>|<D>|calendar'
+        message = templates.MESSAGE_SELECT_DAY
+        markup = markups.calendar_markup(data)
+
+    if message:
+        bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def favorite_callback(callback: types.CallbackQuery, bot: TeleBot):

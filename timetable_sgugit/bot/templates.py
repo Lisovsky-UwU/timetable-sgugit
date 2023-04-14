@@ -24,6 +24,8 @@ MESSAGE_SELECT_FORM = 'Выберите тип обучения'
 MESSAGE_SELECT_COURSE = 'Выберите курс'
 MESSAGE_SELECT_GROUP = 'Выберите группу'
 MESSAGE_SELECT_DAY = 'Выберите день'
+MESSAGE_SELECT_BUILDING = 'Выберите корпус'
+MESSAGE_SELECT_AUDIENCE = 'Выберите аудиторию'
 MESSAGE_SELECT_TEACHER = 'Выберите преподавателя'
 MESSAGE_SEARCH_TEACHER = 'Отправте сообщение для поиска'
 
@@ -58,4 +60,20 @@ LESSON_TEACHER_INFO = '''
 👥 {}
 🎓 {}
 🏢 {}
+'''
+
+
+MESSAGE_AUDIENCE_LESSON_LIST = '''
+Аудитория {}
+Дата {}
+{} неделя
+{}
+'''
+
+LESSON_AUDIENCE_INFO = '''
+{}. {}
+📚 {}
+👨‍🏫 {}
+👥 {}
+🎓 {}
 '''

@@ -10,6 +10,7 @@ from telebot.types import InlineKeyboardButton
 from . import templates
 from ..factory import ControllerFactory
 from ..constants import COURSES
+from ..constants import BUILDINGS
 from ..constants import INSTITUTS
 from ..constants import MONTHS_LIST
 from ..constants import WEEKDAY_LIST
@@ -174,4 +175,32 @@ def teacher_list(
 def cancle(cur_data: List[str]):
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton(templates.BTN_CANCLE, callback_data=f'{"|".join(cur_data)}|cancle'))
+    return keyboard
+
+
+def buildings(cur_data: List[str]):
+    keyboard = InlineKeyboardMarkup()
+
+    for key, item in BUILDINGS.items():
+        keyboard.add(InlineKeyboardButton(item, callback_data=f'{"|".join(cur_data)}|{key}'))
+    
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
+    return keyboard
+
+
+def audience_list(cur_data: List[str]):
+    _audience_list = ControllerFactory.audience().get(int(cur_data[-1]))
+    keyboard = InlineKeyboardMarkup()
+
+    cur_data_str = '|'.join(cur_data)
+    keyboard = InlineKeyboardMarkup()
+    keys_row = list()
+    for index, audience in enumerate(_audience_list, 1):
+        keys_row.append(InlineKeyboardButton(audience.name, callback_data=f'{cur_data_str}|{audience.id}'))
+        if index % 4 == 0:
+            keyboard.row(*keys_row)
+            keys_row.clear()
+
+    keyboard.row(*keys_row)
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='|'.join(cur_data[:-1])))
     return keyboard
