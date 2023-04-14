@@ -58,42 +58,30 @@ def group_interface(
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.ReplyKeyboardMarkup]:
-    if len(interface_data) == 0: # ''
-        return templates.MESSAGE_SELECT_INSTITUTE, markups.institute()
-
-    if len(interface_data) == 1: # '<I>'
-        return templates.MESSAGE_SELECT_FORM, markups.education_forms(data)
-
-    if len(interface_data) == 2: # '<I>|<F>'
-        return templates.MESSAGE_SELECT_COURSE, markups.course(data)
-
-    if len(interface_data) == 3: # '<I>|<F>|<C>
-        return templates.MESSAGE_SELECT_GROUP, markups.group_list(data)
-
-    if len(interface_data) == 4: # '<I>|<F>|<C>|<G>
+    if len(interface_data) == 1:
         _tmp = date.today().strftime('%m.%Y|%d').split('|')
         data.extend(_tmp)
         interface_data.extend(_tmp)
 
-    if len(interface_data) == 5: # '<I>|<F>|<C>|<G>|<M>.<Y>
+    if len(interface_data) == 2: # '<G>|<M>.<Y>
         data.append('1')
         interface_data.append('1')
 
-    lesson_type = f'G:{interface_data[3]}'
+    lesson_type = f'G:{interface_data[0]}'
 
-    if len(interface_data) == 6: # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>
+    if len(interface_data) == 3: # <G>|<M>.<Y>|<D>
         return helpers.build_lesson_group_list(data), markups.lesson_list(data, callback.message.chat.id, lesson_type)
 
-    if len(interface_data) >= 7: # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|...'
-        if interface_data[6] == 'calendar': # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|calendar'
+    if len(interface_data) > 3: # <G>|<M>.<Y>|<D>|...'
+        if interface_data[3] == 'calendar': # <G>|<M>.<Y>|<D>|calendar'
             return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
         
-        elif interface_data[6] == 'favorite' and len(interface_data) > 7: # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|favorite|...'
+        elif interface_data[3] == 'favorite' and len(interface_data) > 3: # <G>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
-            if interface_data[7] == 'add': # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|favorite|add'
+            if interface_data[4] == 'add': # <G>|<M>.<Y>|<D>|favorite|add'
                 user_controller.add_favorite(callback.message.chat.id, lesson_type)
 
-            elif interface_data[7] == 'del': # '<I>|<F>|<C>|<G>|<M>.<Y>|<D>|favorite|del'
+            elif interface_data[4] == 'del': # <G>|<M>.<Y>|<D>|favorite|del'
                 user_controller.delete_favorite(callback.message.chat.id, lesson_type)
 
             data = data[:-2]
@@ -108,61 +96,30 @@ def teacher_interface(
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.InlineKeyboardButton]:
-    if len(interface_data) == 0:
+    if len(interface_data) == 1:
+        _tmp = date.today().strftime('%m.%Y|%d').split('|')
+        data.extend(_tmp)
+        interface_data.extend(_tmp)
+
+    if len(interface_data) == 2: # '<T>|<M>.<Y>'
         data.append('1')
         interface_data.append('1')
 
-    if len(interface_data) == 1: # '<P>'
-        return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+    lesson_type = f'T:{interface_data[0]}'
 
-    if len(interface_data) >= 2: # '<P>|...'
-        if interface_data[1] == 'search': # '<P>|search...'
-            if len(interface_data) == 2: # '<P>|search'
-                msg = bot.edit_message_text(
-                    templates.MESSAGE_SEARCH_TEACHER,
-                    callback.message.chat.id,
-                    callback.message.id,
-                    reply_markup = markups.cancle(data)
-                )
-                bot.register_next_step_handler(msg, helpers.search_teacher, menu_message_id=callback.message.id, bot=bot, data=data)
-                return None, None
-            
-            if len(interface_data) == 3: # '<P>|search|...'
-                if interface_data[-1] == 'cancle': # '<P>|search|cancle'
-                    bot.clear_step_handler_by_chat_id(callback.message.chat.id)
-                    data = data[:-2]
-                    return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
-            
-                else: # '<P>|search|<S>'
-                    data.append('1')
-            
-            if len(interface_data) == 4: # '<P>|search|<S>|<P2>'
-                return templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
-        
-        elif len(interface_data) == 2: # '<P>|<T>'
-            _tmp = date.today().strftime('%m.%Y|%d').split('|')
-            data.extend(_tmp)
-            interface_data.extend(_tmp)
-
-    if len(interface_data) == 3: # '<P>|<T>|<M>.<Y>'
-        data.append('1')
-        interface_data.append('1')
-
-    lesson_type = f'T:{interface_data[1]}'
-
-    if len(interface_data) == 4: # '<P>|<T>|<M>.<Y>|<D>'
+    if len(interface_data) == 3: # '<T>|<M>.<Y>|<D>'
         return helpers.build_lesson_teacher_list(data), markups.lesson_list(data, callback.message.chat.id, lesson_type)
 
-    if len(interface_data) >= 5: # '<P>|<T>|<M>.<Y>|<D>|...'
-        if interface_data[4] == 'calendar': # '<P>|<T>|<M>.<Y>|<D>|calendar'
+    if len(interface_data) >= 4: # '<T>|<M>.<Y>|<D>|...'
+        if interface_data[3] == 'calendar': # '<T>|<M>.<Y>|<D>|calendar'
             return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
 
-        elif interface_data[4] == 'favorite' and len(interface_data) > 5: # '<P>|<T>|<M>.<Y>|<D>|favorite|...'
+        elif interface_data[3] == 'favorite' and len(interface_data) > 4: # '<T>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
-            if interface_data[5] == 'add': # '<P>|<T>|<M>.<Y>|<D>|favorite|add'
+            if interface_data[4] == 'add': # '<T>|<M>.<Y>|<D>|favorite|add'
                 user_controller.add_favorite(callback.message.chat.id, lesson_type)
 
-            elif interface_data[5] == 'del': # '<P>|<T>|<M>.<Y>|<D>|favorite|del'
+            elif interface_data[4] == 'del': # '<T>|<M>.<Y>|<D>|favorite|del'
                 user_controller.delete_favorite(callback.message.chat.id, lesson_type)
 
             data = data[:-2]
@@ -177,36 +134,30 @@ def audience_interface(
     data: List[str], 
     interface_data: List[str]
 ) -> Tuple[str, types.ReplyKeyboardMarkup]:
-    if len(interface_data) == 0: # ''
-        return templates.MESSAGE_SELECT_BUILDING, markups.buildings(data)
-    
-    if len(interface_data) == 1: # '<B>'
-        return templates.MESSAGE_SELECT_AUDIENCE, markups.audience_list(data)
-
-    if len(interface_data) == 2: # '<B>|<A>'
+    if len(interface_data) == 1: # '<A>'
         _tmp = date.today().strftime('%m.%Y|%d').split('|')
         data.extend(_tmp)
         interface_data.extend(_tmp)
 
-    if len(interface_data) == 3: # '<B>|<A>|<M>.<Y>'
+    if len(interface_data) == 2: # '<A>|<M>.<Y>'
         data.append('01')
         interface_data.append('01')
     
-    lesson_type = f'A:{interface_data[1]}'
+    lesson_type = f'A:{interface_data[0]}'
 
-    if len(interface_data) == 4: # '<B>|<A>|<M>.<Y>|<D>'
+    if len(interface_data) == 3: # '<A>|<M>.<Y>|<D>'
         return helpers.build_lesson_audience_list(data), markups.lesson_list(data, callback.message.chat.id, lesson_type)
 
-    if len(interface_data) >= 5: # '<B>|<A>|<M>.<Y>|<D>|...'
-        if interface_data[4] == 'calendar': # '<B>|<A>|<M>.<Y>|<D>|calendar'
+    if len(interface_data) >= 4: # '<A>|<M>.<Y>|<D>|...'
+        if interface_data[3] == 'calendar': # '<A>|<M>.<Y>|<D>|calendar'
             return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
 
-        elif interface_data[4] == 'favorite' and len(interface_data) > 5: # '<B>|<A>|<M>.<Y>|<D>|favorite|...'
+        elif interface_data[3] == 'favorite' and len(interface_data) > 4: # '<A>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
-            if interface_data[5] == 'add': # '<B>|<A>|<M>.<Y>|<D>|favorite|add'
+            if interface_data[4] == 'add': # '<A>|<M>.<Y>|<D>|favorite|add'
                 user_controller.add_favorite(callback.message.chat.id, lesson_type)
 
-            elif interface_data[5] == 'del': # '<B>|<A>|<M>.<Y>|<D>|favorite|del'
+            elif interface_data[4] == 'del': # '<A>|<M>.<Y>|<D>|favorite|del'
                 user_controller.delete_favorite(callback.message.chat.id, lesson_type)
 
             data = data[:-2]
@@ -217,7 +168,22 @@ def audience_interface(
 
 def group_callback(callback: types.CallbackQuery, bot: TeleBot):
     data = callback.data.split('|') # 'group|...'
-    message, markup = group_interface(callback, bot, data, data[1:])
+    message, markup = None, None
+
+    if len(data) == 1: # 'group'
+        message, markup = templates.MESSAGE_SELECT_INSTITUTE, markups.institute()
+
+    if len(data) == 2: # 'group|<I>'
+        message, markup = templates.MESSAGE_SELECT_FORM, markups.education_forms(data)
+
+    if len(data) == 3: # 'group|<I>|<F>'
+        message, markup = templates.MESSAGE_SELECT_COURSE, markups.course(data)
+
+    if len(data) == 4: # 'group|<I>|<F>|<C>'
+        message, markup = templates.MESSAGE_SELECT_GROUP, markups.group_list(data)
+
+    if len(data) >= 5: # 'group|<I>|<F>|<C>|<G>|...'
+        message, markup = group_interface(callback, bot, data, data[4:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
@@ -225,7 +191,40 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
     data = callback.data.split('|') # 'teacher|...'
-    message, markup = teacher_interface(callback, bot, data, data[1:])
+    message, markup = None, None
+
+    if len(data) == 1:
+        data.append('1')
+
+    if len(data) == 2: # 'teacher|<P>'
+        message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+
+    if len(data) >= 3: # 'teacher|<P>|...'
+        if data[2] == 'search': # 'teacher|<P>|search...'
+            if len(data) == 3: # 'teacher|<P>|search'
+                msg = bot.edit_message_text(
+                    templates.MESSAGE_SEARCH_TEACHER,
+                    callback.message.chat.id,
+                    callback.message.id,
+                    reply_markup = markups.cancle(data)
+                )
+                bot.register_next_step_handler(msg, helpers.search_teacher, menu_message_id=callback.message.id, bot=bot, data=data)
+                message, markup = False, False
+            
+            if len(data) == 4: # 'teacher|<P>|search|...'
+                if data[-1] == 'cancle': # 'teacher|<P>|search|cancle'
+                    bot.clear_step_handler_by_chat_id(callback.message.chat.id)
+                    data = data[:-2]
+                    message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+            
+                else: # 'teacher|<P>|search|<S>'
+                    data.append('1')
+            
+            if len(data) == 5: # 'teacher|<P>|search|<S>|<P2>'
+                message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
+
+    if message is None and len(data) >= 2:
+        message, markup = teacher_interface(callback, bot, data, data[2:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
@@ -233,7 +232,16 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 def audience_callback(callback: types.CallbackQuery, bot: TeleBot):
     data = callback.data.split('|') # 'audience|...'
-    message, markup = audience_interface(callback, bot, data, data[1:])
+    message, markup = None, None
+
+    if len(data) == 1: # 'audience'
+        message, markup = templates.MESSAGE_SELECT_BUILDING, markups.buildings(data)
+    
+    if len(data) == 2: # 'audience|<B>'
+        message, markup = templates.MESSAGE_SELECT_AUDIENCE, markups.audience_list(data)
+    
+    if len(data) > 2: # 'audience|<B>|...'
+        message, markup = audience_interface(callback, bot, data, data[2:])
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
