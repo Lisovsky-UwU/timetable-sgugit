@@ -216,6 +216,7 @@ def favorite_list(favorite_list: List[Tuple[str, str]]):
     keyboard = InlineKeyboardMarkup()
 
     for el_fav in favorite_list:
+        _btn_text = None
         if el_fav[0] == 'G': # Группа
             _btn_text = f'{templates.PREFIX_GROUP}{ControllerFactory.group().get_by_id(int(el_fav[1])).name}'
 
@@ -225,7 +226,8 @@ def favorite_list(favorite_list: List[Tuple[str, str]]):
         elif el_fav[0] == 'A': # Аудитория
             _btn_text = f'{templates.PREFIX_AUDIENCE}{ControllerFactory.audience().get_by_id(int(el_fav[1])).name}'
 
-        keyboard.add(InlineKeyboardButton(_btn_text, callback_data=f'favorite|{el_fav[0]}|{el_fav[1]}'))
+        if _btn_text is not None:
+            keyboard.add(InlineKeyboardButton(_btn_text, callback_data=f'favorite|{el_fav[0]}|{el_fav[1]}'))
 
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
     return keyboard
