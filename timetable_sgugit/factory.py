@@ -7,12 +7,15 @@ from .services import LessonDBService
 from .services import TeacherDBService
 from .services import AudienceDBService
 from .services import LessonNameDBService
+from .services import FeedbackDBService
+from .services import FeedbackSendToDBService
 from .controllers import DataFetcher
 from .controllers import UserDBController
 from .controllers import GroupDBController
 from .controllers import LessonDBController
 from .controllers import TeacherDBController
 from .controllers import AudienceDBController
+from .controllers import FeedbackDBController
 from .controllers import LessonNameDBController
 
 
@@ -24,6 +27,8 @@ class ControllerFactory:
     teacher_service_type: Type[TeacherDBService]
     audience_service_type: Type[AudienceDBService]
     lesson_name_service_type: Type[LessonNameDBService]
+    feedback_service_type: Type[FeedbackDBService]
+    feedback_send_to_service_type: Type[FeedbackSendToDBService]
 
     
     @classmethod
@@ -54,6 +59,14 @@ class ControllerFactory:
     @classmethod
     def user(cls):
         return UserDBController(cls.user_service_type)
+    
+
+    @classmethod
+    def feedback(cls):
+        return FeedbackDBController(
+            cls.feedback_service_type,
+            cls.feedback_send_to_service_type
+        )
 
 
     @classmethod

@@ -2,6 +2,8 @@ from loguru import logger
 
 from .fetch_manager import FetchManager
 from .configmodule import config
+from .services import FeedbackSendToDBService
+from .services import FeedbackDBService
 from .services import LessonNameDBService
 from .services import AudienceDBService
 from .services import TeacherDBService
@@ -25,6 +27,8 @@ def start():
         ControllerFactory.teacher_service_type = TeacherDBService
         ControllerFactory.audience_service_type = AudienceDBService
         ControllerFactory.lesson_name_service_type = LessonNameDBService
+        ControllerFactory.feedback_service_type = FeedbackDBService
+        ControllerFactory.feedback_send_to_service_type = FeedbackSendToDBService
         
         if config.parser.manager:
             logger.info('Запуск FetchManager')
