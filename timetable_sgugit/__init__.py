@@ -1,3 +1,6 @@
+from loguru import logger
+
+from .fetch_manager import FetchManager
 from .services import LessonNameDBService
 from .services import AudienceDBService
 from .services import TeacherDBService
@@ -22,11 +25,18 @@ def start():
         ControllerFactory.audience_service_type = AudienceDBService
         ControllerFactory.lesson_name_service_type = LessonNameDBService
         
-        ControllerFactory.data_fetcher().fetch_all()
+        logger.info('Запуск FetchManager')
+        fetch_manager = FetchManager(
+            ControllerFactory.data_fetcher()
+        )
+        fetch_manager.start()
+        logger.success('FetchManager запущен')
 
+        logger.info('Запуск бота')
         build_bot().infinity_polling()
+
     except KeyboardInterrupt:
-        pass
+        fetch_manager.join()
 
 
 if __name__ == '__main__':
