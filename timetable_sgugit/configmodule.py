@@ -14,6 +14,7 @@ class Parser(BaseModel):
     audiences_url : str
     teachers_url  : str
     lessons_url   : str
+    manager       : bool = True
 
 
 class Log(BaseModel):

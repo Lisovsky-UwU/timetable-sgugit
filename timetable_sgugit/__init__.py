@@ -1,6 +1,7 @@
 from loguru import logger
 
 from .fetch_manager import FetchManager
+from .configmodule import config
 from .services import LessonNameDBService
 from .services import AudienceDBService
 from .services import TeacherDBService
@@ -25,12 +26,15 @@ def start():
         ControllerFactory.audience_service_type = AudienceDBService
         ControllerFactory.lesson_name_service_type = LessonNameDBService
         
-        logger.info('Запуск FetchManager')
-        fetch_manager = FetchManager(
-            ControllerFactory.data_fetcher()
-        )
-        fetch_manager.start()
-        logger.success('FetchManager запущен')
+        if config.parser.manager:
+            logger.info('Запуск FetchManager')
+            fetch_manager = FetchManager(
+                ControllerFactory.data_fetcher()
+            )
+            fetch_manager.start()
+            logger.success('FetchManager запущен')
+        else:
+            logger.info('FetchManager выключен настройками конфигурации')
 
         logger.info('Запуск бота')
         build_bot().infinity_polling()
