@@ -17,6 +17,8 @@ def session_factory(**kwargs):
 
 
 from .lesson_name import LessonName
+from .feedback import FeedbackSendTo
+from .feedback import Feedback
 from .audience import Audience
 from .teacher import Teacher
 from .lesson import Lesson
