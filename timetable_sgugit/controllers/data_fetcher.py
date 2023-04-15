@@ -16,6 +16,7 @@ from ..constants import REVERS_LESSON_TYPE
 from ..constants import EDUCATION_FORMS
 from ..constants import INSTITUTS
 from ..constants import COURSES
+from ..configmodule import config
 
 
 class DataFetcher:
@@ -88,7 +89,7 @@ class DataFetcher:
                 logger.debug(f'Фетчим данные для института {inst_v}, курса {course}')
                 try:
                     resp = requests.get(
-                        'https://sgugit.ru/bitrix/services/main/ajax.php?mode=class&c=sgugit:rasp&action=getGroupsInfo',
+                        config.parser.groups_url,
                         params = { 'instituteId': inst_k, 'course': course },
                         headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
                     )
@@ -131,7 +132,7 @@ class DataFetcher:
                     )
                     for lesson in 
                         self._parser.parse_lessons(
-                            f'https://sgugit.ru/raspisanie/group/{group_db.sgugit_id}/'
+                            config.parser.lessons_url.format(group_db.sgugit_id)
                         )
                 )
                 logger.debug(f'Занятия для группы {group_db.name} успешно получены')

@@ -15,7 +15,7 @@ from .handlers import feedback_callback
 from .handlers import main_menu_callback
 from .handlers import message_handle_exceptions
 from .handlers import callback_handle_exceptions
-from ..constants import BOT_TOKEN
+from ..configmodule import config
 
 
 message_handlers: Dict[MessageHandler, Any] = {
@@ -38,7 +38,7 @@ command_list = {
 
 
 def build_bot() -> TeleBot:
-    bot = TeleBot(BOT_TOKEN)
+    bot = TeleBot(config.bot.token)
 
     for handler, filter in message_handlers.items():
         decorated = message_handle_exceptions(handler)

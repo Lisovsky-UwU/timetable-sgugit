@@ -4,6 +4,7 @@ from typing import List
 from typing import Dict
 from loguru import logger
 
+from .configmodule import config
 from .models import LessonParseResult
 
 
@@ -11,8 +12,7 @@ class SgugitWebParser:
 
     def parse_teachers(self) -> List[str]:
         logger.debug('Запрос страницы с преподавателями')
-        url = 'https://sgugit.ru/raspisanie/teacher/'
-        response = requests.get(url)
+        response = requests.get(config.parser.teachers_url)
         page = BeautifulSoup(response.text, "html.parser")
 
         logger.debug('Парсинг страницы с преподавателями')
@@ -24,8 +24,7 @@ class SgugitWebParser:
 
     def parse_audiences(self) -> Dict[int, List[str]]:
         logger.debug('Запрос страницы с аудиториями')
-        url = 'https://sgugit.ru/raspisanie/audience/'
-        response = requests.get(url)
+        response = requests.get(config.parser.audiences_url)
         page = BeautifulSoup(response.text, "html.parser")
 
         logger.debug('Парсинг страницы с аудиториями')

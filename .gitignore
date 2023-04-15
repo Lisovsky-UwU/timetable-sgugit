@@ -4,3 +4,4 @@ __pycache__
 log
 config.yaml
 timetable_sgugit.db
+config.ini
