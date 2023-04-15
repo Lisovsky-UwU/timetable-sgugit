@@ -272,7 +272,24 @@ def favorite_callback(callback: types.CallbackQuery, bot: TeleBot):
 
 
 def feedback_callback(callback: types.CallbackQuery, bot: TeleBot):
-    ...
+    data = callback.data.split('|') # 'feedback|...'
+    message, markup = None, None
+
+    if len(data) == 1: # 'feedback'
+        bot.register_next_step_handler(
+            callback.message,
+            helpers.send_feedback,
+            menu_message_id=callback.message.id,
+            bot=bot,
+        )
+        message, markup = templates.MSG_FEEDBACK, markups.cancle(data)
+    
+    if len(data) == 2: # 'feedback|cancle'
+        bot.clear_step_handler_by_chat_id(callback.message.chat.id)
+        message, markup = templates.MSG_MAIN_MENU, markups.main_menu_markup()
+
+    if message:
+        bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
 
 
 def empty_callback(callback: types.CallbackQuery, bot: TeleBot):

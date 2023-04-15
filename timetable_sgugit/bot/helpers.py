@@ -117,3 +117,19 @@ def build_lesson_audience_list(data: List[str]):
         get_week_number(_select_day),
         list_lesson_str if len(lesson_list) != 0 else templates.NO_LESSON_ON_DAY
     )
+
+
+def send_feedback(
+    message: types.Message,
+    menu_message_id: int,
+    bot: TeleBot,
+):
+    bot.delete_message(message.chat.id, menu_message_id)
+
+    # TODO doing magic...
+
+    bot.send_message(
+        message.chat.id,
+        templates.MSG_FEEDBACK_IS_SEND, 
+        reply_markup=markups.feedback_is_send()
+    )

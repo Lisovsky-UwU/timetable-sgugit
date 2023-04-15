@@ -229,3 +229,10 @@ def favorite_list(favorite_list: List[Tuple[str, str]]):
 
     keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
     return keyboard
+
+
+def feedback_is_send():
+    keyboard = InlineKeyboardMarkup()
+
+    keyboard.add(InlineKeyboardButton(templates.BTN_BACK, callback_data='main_menu'))
+    return keyboard
