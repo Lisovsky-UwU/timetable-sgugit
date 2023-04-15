@@ -34,7 +34,7 @@ def build_lesson_group_list(data: List[str]) -> str:
     )
 
     _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
-    return templates.MESSAGE_GROUP_LESSON_LIST.format(
+    return templates.MSG_GROUP_LESSON_LIST.format(
         group.name,
         f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
         get_week_number(_select_day),
@@ -63,7 +63,7 @@ def build_lesson_teacher_list(data: List[str]) -> str:
     )
 
     _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
-    return templates.MESSAGE_TEACHER_LESSON_LIST.format(
+    return templates.MSG_TEACHER_LESSON_LIST.format(
         teacher.name,
         f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
         get_week_number(_select_day),
@@ -81,7 +81,7 @@ def search_teacher(
     bot.delete_message(message.chat.id, menu_message_id)
     bot.send_message(
         message.chat.id,
-        templates.MESSAGE_SELECT_TEACHER, 
+        templates.MSG_SELECT_TEACHER, 
         reply_markup=markups.teacher_list(
             data,
             ControllerFactory.teacher().search_by_name(message.text),
@@ -111,7 +111,7 @@ def build_lesson_audience_list(data: List[str]):
     )
 
     _select_day = datetime.strptime(f'{data[-1]}.{data[-2]}', '%d.%m.%Y').date()
-    return templates.MESSAGE_AUDIENCE_LESSON_LIST.format(
+    return templates.MSG_AUDIENCE_LESSON_LIST.format(
         audience.name,
         f'{data[-1]}.{data[-2]} - {WEEKDAYS_TEXT[_select_day.weekday()]}',
         get_week_number(_select_day),

@@ -22,11 +22,11 @@ from ..orm import Teacher
 
 def main_menu_markup():
     keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton(templates.BTN_SELECT_GROUP, callback_data='group'))
-    keyboard.add(InlineKeyboardButton(templates.BTN_SELECT_TEACHER, callback_data='teacher'))
-    keyboard.add(InlineKeyboardButton(templates.BTN_SELECT_AUDIENCE, callback_data='audience'))
-    keyboard.add(InlineKeyboardButton(templates.BTN_SELECT_FAVORITE, callback_data='favorite'))
-    keyboard.add(InlineKeyboardButton(templates.BTN_SELECT_FEEDBACK, callback_data='feedback'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_GROUP, callback_data='group'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_TEACHER, callback_data='teacher'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_AUDIENCE, callback_data='audience'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_FAVORITE, callback_data='favorite'))
+    keyboard.add(InlineKeyboardButton(templates.BTN_MAIN_FEEDBACK, callback_data='feedback'))
 
     return keyboard
 

@@ -40,12 +40,12 @@ def callback_handle_exceptions(handler: CallbackHandler):
 
 def start(message: types.Message, bot: TeleBot):
     ControllerFactory.user().create_if_not_exists(message.chat.id, message.from_user.username)
-    bot.send_message(message.chat.id, templates.MESSAGE_MAIN_MENU, reply_markup=markups.main_menu_markup())
+    bot.send_message(message.chat.id, templates.MSG_MAIN_MENU, reply_markup=markups.main_menu_markup())
 
 
 def main_menu_callback(callback: types.CallbackQuery, bot: TeleBot):
     bot.edit_message_text(
-        templates.MESSAGE_MAIN_MENU,
+        templates.MSG_MAIN_MENU,
         callback.message.chat.id,
         callback.message.id,
         reply_markup = markups.main_menu_markup()
@@ -73,7 +73,7 @@ def group_interface(
 
     if len(interface_data) > 3: # <G>|<M>.<Y>|<D>|...'
         if interface_data[3] == 'calendar': # <G>|<M>.<Y>|<D>|calendar'
-            return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+            return templates.MSG_SELECT_DAY, markups.calendar_markup(data)
         
         elif interface_data[3] == 'favorite' and len(interface_data) > 3: # <G>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
@@ -110,7 +110,7 @@ def teacher_interface(
 
     if len(interface_data) >= 4: # '<T>|<M>.<Y>|<D>|...'
         if interface_data[3] == 'calendar': # '<T>|<M>.<Y>|<D>|calendar'
-            return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+            return templates.MSG_SELECT_DAY, markups.calendar_markup(data)
 
         elif interface_data[3] == 'favorite' and len(interface_data) > 4: # '<T>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
@@ -147,7 +147,7 @@ def audience_interface(
 
     if len(interface_data) >= 4: # '<A>|<M>.<Y>|<D>|...'
         if interface_data[3] == 'calendar': # '<A>|<M>.<Y>|<D>|calendar'
-            return templates.MESSAGE_SELECT_DAY, markups.calendar_markup(data)
+            return templates.MSG_SELECT_DAY, markups.calendar_markup(data)
 
         elif interface_data[3] == 'favorite' and len(interface_data) > 4: # '<A>|<M>.<Y>|<D>|favorite|...'
             user_controller = ControllerFactory.user()
@@ -168,16 +168,16 @@ def group_callback(callback: types.CallbackQuery, bot: TeleBot):
     message, markup = None, None
 
     if len(data) == 1: # 'group'
-        message, markup = templates.MESSAGE_SELECT_INSTITUTE, markups.institute()
+        message, markup = templates.MSG_SELECT_INSTITUTE, markups.institute()
 
     if len(data) == 2: # 'group|<I>'
-        message, markup = templates.MESSAGE_SELECT_FORM, markups.education_forms(data)
+        message, markup = templates.MSG_SELECT_FORM, markups.education_forms(data)
 
     if len(data) == 3: # 'group|<I>|<F>'
-        message, markup = templates.MESSAGE_SELECT_COURSE, markups.course(data)
+        message, markup = templates.MSG_SELECT_COURSE, markups.course(data)
 
     if len(data) == 4: # 'group|<I>|<F>|<C>'
-        message, markup = templates.MESSAGE_SELECT_GROUP, markups.group_list(data)
+        message, markup = templates.MSG_SELECT_GROUP, markups.group_list(data)
 
     if len(data) >= 5: # 'group|<I>|<F>|<C>|<G>|...'
         message, markup = group_interface(callback, data, data[4:])
@@ -194,13 +194,13 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
         data.append('1')
 
     if len(data) == 2: # 'teacher|<P>'
-        message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+        message, markup = templates.MSG_SELECT_TEACHER, markups.teacher_list(data)
 
     if len(data) >= 3: # 'teacher|<P>|...'
         if data[2] == 'search': # 'teacher|<P>|search...'
             if len(data) == 3: # 'teacher|<P>|search'
                 msg = bot.edit_message_text(
-                    templates.MESSAGE_SEARCH_TEACHER,
+                    templates.MSG_SEARCH_TEACHER,
                     callback.message.chat.id,
                     callback.message.id,
                     reply_markup = markups.cancle(data)
@@ -212,13 +212,13 @@ def teacher_callback(callback: types.CallbackQuery, bot: TeleBot):
                 if data[-1] == 'cancle': # 'teacher|<P>|search|cancle'
                     bot.clear_step_handler_by_chat_id(callback.message.chat.id)
                     data = data[:-2]
-                    message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data)
+                    message, markup = templates.MSG_SELECT_TEACHER, markups.teacher_list(data)
             
                 else: # 'teacher|<P>|search|<S>'
                     data.append('1')
             
             if len(data) == 5: # 'teacher|<P>|search|<S>|<P2>'
-                message, markup = templates.MESSAGE_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
+                message, markup = templates.MSG_SELECT_TEACHER, markups.teacher_list(data, ControllerFactory.teacher().search_by_name(data[3]), False)
 
     if message is None and len(data) >= 2:
         message, markup = teacher_interface(callback, data, data[2:])
@@ -232,10 +232,10 @@ def audience_callback(callback: types.CallbackQuery, bot: TeleBot):
     message, markup = None, None
 
     if len(data) == 1: # 'audience'
-        message, markup = templates.MESSAGE_SELECT_BUILDING, markups.buildings(data)
+        message, markup = templates.MSG_SELECT_BUILDING, markups.buildings(data)
     
     if len(data) == 2: # 'audience|<B>'
-        message, markup = templates.MESSAGE_SELECT_AUDIENCE, markups.audience_list(data)
+        message, markup = templates.MSG_SELECT_AUDIENCE, markups.audience_list(data)
     
     if len(data) > 2: # 'audience|<B>|...'
         message, markup = audience_interface(callback, data, data[2:])
@@ -252,7 +252,7 @@ def favorite_callback(callback: types.CallbackQuery, bot: TeleBot):
         data.pop(len(data) - 1)
 
     if len(data) == 1: # 'favorite'
-        message = templates.MESSAGE_SELECT_FAVORITE
+        message = templates.MSG_SELECT_FAVORITE
         markup = markups.favorite_list(
             ControllerFactory.user().get(callback.message.chat.id).get_list_favorites()
         )
