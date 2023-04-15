@@ -8,6 +8,7 @@ from . import CallbackHandler
 from .handlers import start
 from .handlers import empty_callback
 from .handlers import group_callback
+from .handlers import regular_message
 from .handlers import teacher_callback
 from .handlers import audience_callback
 from .handlers import favorite_callback
@@ -19,7 +20,8 @@ from ..configmodule import config
 
 
 message_handlers: Dict[MessageHandler, Any] = {
-    start : { 'commands': ['start'] },
+    start           : { 'commands': ['start'] },
+    regular_message : { 'func': lambda m: True },
 }
 
 callback_handlers: Dict[CallbackHandler, Any] = {

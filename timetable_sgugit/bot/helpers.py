@@ -11,6 +11,7 @@ from ..factory import ControllerFactory
 from ..constants import HOURS_TYPE
 from ..constants import LESSON_TYPE
 from ..constants import WEEKDAYS_TEXT
+from ..configmodule import config
 
 
 def build_lesson_group_list(data: List[str]) -> str:
@@ -125,11 +126,30 @@ def send_feedback(
     bot: TeleBot,
 ):
     bot.delete_message(message.chat.id, menu_message_id)
-
-    # TODO doing magic...
-
     bot.send_message(
         message.chat.id,
         templates.MSG_FEEDBACK_IS_SEND, 
         reply_markup=markups.feedback_is_send()
     )
+
+    feedback_controller = ControllerFactory.feedback()
+    user_controller = ControllerFactory.user()
+
+    feedback_db = feedback_controller.take_feedback(
+        user_controller.get(message.chat.id).id,
+        message.id
+    )
+
+    for send_to_chat_id in config.bot.feedback_send_to.split('|'):
+        bot.send_message(
+            send_to_chat_id,
+            templates.MSG_FEEDBACK_SEND_TO.format(
+                message.from_user.username
+            )
+        )
+        send_to_message = bot.forward_message(send_to_chat_id, message.chat.id, message.id)
+        feedback_controller.send_feedback_to(
+            user_controller.get(send_to_chat_id).id,
+            send_to_message.id,
+            feedback_db.id
+        )

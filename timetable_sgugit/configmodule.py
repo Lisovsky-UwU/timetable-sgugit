@@ -5,7 +5,8 @@ from pydantic import BaseModel
 
 class Bot(BaseModel):
 
-    token: str
+    token            : str
+    feedback_send_to : str
 
 
 class Parser(BaseModel):

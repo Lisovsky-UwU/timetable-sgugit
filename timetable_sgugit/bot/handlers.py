@@ -12,6 +12,7 @@ from . import markups
 from . import helpers
 from . import templates
 from ..factory import ControllerFactory
+from ..configmodule import config
 
 
 def message_handle_exceptions(handler: MessageHandler):
@@ -290,6 +291,32 @@ def feedback_callback(callback: types.CallbackQuery, bot: TeleBot):
 
     if message:
         bot.edit_message_text(message, callback.message.chat.id, callback.message.id, reply_markup = markup)
+
+
+def regular_message(message: types.Message, bot: TeleBot):
+    if str(message.chat.id) in config.bot.feedback_send_to.split('|') \
+        and message.reply_to_message is not None:
+        try:
+            chat_id, message_id = ControllerFactory.feedback().reply_to(
+                ControllerFactory.user().get(message.chat.id).id,
+                message.reply_to_message.id
+            )
+            bot.send_message(
+                chat_id,
+                message.text,
+                reply_to_message_id=message_id
+            )
+            bot.send_message(
+                message.chat.id, 
+                templates.MSG_FEEDBACK_REPLY_IS_SEND, 
+                reply_to_message_id=message.id
+            )
+        except Exception as e:
+            bot.send_message(
+                message.chat.id, 
+                templates.MSG_FEEDBACK_REPLY_NOT_SEND.format(str(e)),
+                reply_to_message_id=message.id
+            )
 
 
 def empty_callback(callback: types.CallbackQuery, bot: TeleBot):
