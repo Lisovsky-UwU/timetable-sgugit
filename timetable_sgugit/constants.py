@@ -52,7 +52,7 @@ EDUCATION_FORMS = {
 
 
 BUILDINGS = {
-    0: 'Основной корпус',
+    0: 'Главный корпус',
     1: 'Лабораторный корпус',
 }
 
@@ -72,3 +72,6 @@ WEEKDAYS_TEXT = {
     5: 'Суббота',
     6: 'Воскресенье'
 }
+
+
+FAKE_ERROR = 'A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message'

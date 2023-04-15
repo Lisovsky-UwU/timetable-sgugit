@@ -12,6 +12,7 @@ from . import markups
 from . import helpers
 from . import templates
 from ..factory import ControllerFactory
+from ..constants import FAKE_ERROR
 from ..configmodule import config
 
 
@@ -34,7 +35,8 @@ def callback_handle_exceptions(handler: CallbackHandler):
         try:
             return handler(arg, bot)
         except Exception as e:
-            logger.error(f'В чате с @{arg.from_user.username} (message: {arg.data}) возникла ошибка: {e}')
+            if str(e) != FAKE_ERROR:
+                logger.error(f'В чате с @{arg.from_user.username} (message: {arg.data}) возникла ошибка: {e}')
     
     return decorator
 
