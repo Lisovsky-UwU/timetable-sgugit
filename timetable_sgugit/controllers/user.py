@@ -47,6 +47,9 @@ class UserDBController:
 
     @lru_cache(maxsize=None)
     def create_if_not_exists(self, chat_id: int, username: str) -> User:
+        if username is None:
+            username = 'Unknown'
+
         with self.service_type() as service:
             data = service.get_for_filter(chat_id, username)
             if data is None:
