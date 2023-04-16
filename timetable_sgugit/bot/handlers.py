@@ -19,11 +19,11 @@ from ..configmodule import config
 def message_handle_exceptions(handler: MessageHandler):
     @functools.wraps(handler)
     def decorator(message: types.Message, bot: TeleBot):
-        logger.debug(f'Вызывается message обработчик {handler.__name__} пользователем @{message.from_user.username} (data: "{message.text}")')
+        logger.debug(f'Message {handler.__name__} in chat {message.chat.id} (data: "{message.text}")')
         try:
             return handler(message, bot)
         except Exception as e:
-            logger.error(f'В чате с @{message.from_user.username} (message: {message.text}) возникла ошибка: {e}')
+            logger.error(f'Error: Chat - {message.chat.id} (message: {message.text}): {e}')
     
     return decorator
 
@@ -31,12 +31,12 @@ def message_handle_exceptions(handler: MessageHandler):
 def callback_handle_exceptions(handler: CallbackHandler):
     @functools.wraps(handler)
     def decorator(arg: types.CallbackQuery, bot: TeleBot):
-        logger.debug(f'Вызывается callback обработчик {handler.__name__} пользователем @{arg.from_user.username} (data: "{arg.data}")')
+        logger.debug(f'Callback {handler.__name__} in chat {arg.message.chat.id} (data: "{arg.data}")')
         try:
             return handler(arg, bot)
         except Exception as e:
             if str(e) != FAKE_ERROR:
-                logger.error(f'В чате с @{arg.from_user.username} (message: {arg.data}) возникла ошибка: {e}')
+                logger.error(f'Error: Chat - {arg.message.chat.id} (message: {arg.data}): {e}')
     
     return decorator
 
