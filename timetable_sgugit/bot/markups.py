@@ -102,7 +102,7 @@ def calendar_markup(cur_data: List[str]):
     for week in Calendar().monthdatescalendar(year, month):
         keyboard.row(
             *[
-                InlineKeyboardButton(day.day, callback_data=f'{cur_data_str}|{day.strftime("%m.%Y")}|{day.day}')
+                InlineKeyboardButton(day.day, callback_data=f'{cur_data_str}|{day.strftime("%m.%Y|%d")}')
                 for day in week
             ]
         )
