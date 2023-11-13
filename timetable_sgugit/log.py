@@ -1,3 +1,4 @@
+import os
 import sys
 from loguru import logger
 from .configmodule import config
@@ -11,5 +12,5 @@ def init_logger():
         'level': config.log.level,
     }
 
-    logger.add('log\\{time:YYYY-MM-DD}.log', retention=f'{config.log.retention} days', **log_config)
+    logger.add(os.sep.join(['log', '{time:YYYY-MM-DD}.log']), retention=f'{config.log.retention} days', **log_config)
     logger.add(sys.stdout, **log_config)
