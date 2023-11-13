@@ -15,8 +15,8 @@ class Lesson(Base):
     hour           = Column(Integer, nullable=False)
     lesson_type    = Column(Integer, nullable=False)
     audience       = Column(Integer, ForeignKey('audiences.id'), nullable=True, index=True)
-    group          = Column(Integer, ForeignKey('groups.id'), nullable=False, index=True)
-    teacher        = Column(Integer, ForeignKey('teachers.id'), nullable=False, index=True)
+    group          = Column(Integer, ForeignKey('groups.id'), nullable=True, index=True)
+    teacher        = Column(Integer, ForeignKey('teachers.id'), nullable=True, index=True)
     lesson_name    = Column(Integer, ForeignKey('lesson_names.id'), nullable=False)
     date           = Column(String, nullable=False, index=True)
 

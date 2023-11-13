@@ -49,9 +49,9 @@ class LessonDBController:
                     id          = lesson.id,
                     hour        = lesson.hour,
                     lesson_type = lesson.lesson_type,
-                    audience    = lesson.audience_db.name,
-                    group       = lesson.group_db.name,
-                    teacher     = lesson.teacher_db.name,
+                    audience    = lesson.audience_db.name if lesson.audience_db is not None else 'Без аудитории',
+                    group       = lesson.group_db.name if lesson.group_db is not None else 'Без группы',
+                    teacher     = lesson.teacher_db.name if lesson.teacher_db is not None else 'Без преподавателя',
                     lesson_name = lesson.lesson_name_db.name,
                     date        = lesson.date
                 )
