@@ -23,7 +23,7 @@ def message_handle_exceptions(handler: MessageHandler):
         try:
             return handler(message, bot)
         except Exception as e:
-            logger.error(f'Error: Chat - {message.chat.id} (message: {message.text}): {e}')
+            logger.exception(f'Error: Chat - {message.chat.id} (message: {message.text}): {e}', e)
     
     return decorator
 
@@ -36,7 +36,7 @@ def callback_handle_exceptions(handler: CallbackHandler):
             return handler(arg, bot)
         except Exception as e:
             if str(e) != FAKE_ERROR:
-                logger.error(f'Error: Chat - {arg.message.chat.id} (message: {arg.data}): {e}')
+                logger.exception(f'Error: Chat - {arg.message.chat.id} (message: {arg.data}): {e}', e)
     
     return decorator
 
