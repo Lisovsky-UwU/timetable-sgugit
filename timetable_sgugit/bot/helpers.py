@@ -79,7 +79,10 @@ def search_teacher(
     data: List[str], 
 ):
     data.extend([ message.text, '1' ]) # Добавляем в данные сообщение для поиска и номер страницы
-    bot.delete_message(message.chat.id, menu_message_id)
+    try:
+        bot.delete_message(message.chat.id, menu_message_id)
+    except:
+        pass
     bot.send_message(
         message.chat.id,
         templates.MSG_SELECT_TEACHER, 
@@ -125,7 +128,10 @@ def send_feedback(
     menu_message_id: int,
     bot: TeleBot,
 ):
-    bot.delete_message(message.chat.id, menu_message_id)
+    try:
+        bot.delete_message(message.chat.id, menu_message_id)
+    except:
+        pass
     bot.send_message(
         message.chat.id,
         templates.MSG_FEEDBACK_IS_SEND, 
