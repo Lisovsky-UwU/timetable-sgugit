@@ -53,7 +53,7 @@ class SgugitWebParser:
                 
                 result.append(
                     LessonParseResult(
-                        hour        = index,
+                        hour        = str(index),
                         lesson_type = lesson.find('p', 'lesson_type').text.strip().capitalize(),
                         audience    = lesson.find('a', 'aud_num').text.strip(),
                         group       = page.find('div', 'container_title').find('h1').text.strip(),

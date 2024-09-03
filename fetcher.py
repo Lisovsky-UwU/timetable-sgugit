@@ -30,7 +30,7 @@ if __name__ == '__main__':
             ControllerFactory.audience_service_type = AudienceDBService
             ControllerFactory.lesson_name_service_type = LessonNameDBService
 
-            init_logger()
+            init_logger(log_lvl='DEBUG', write_in_file=False)
             create_db()
 
             if config['all']:
