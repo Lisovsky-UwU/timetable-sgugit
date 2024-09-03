@@ -20,7 +20,11 @@ from .bot import build_bot
 
 def start():
     try:
-        init_logger()
+        init_logger(
+            config.log.level, 
+            config.log.retention, 
+            config.log.in_file
+        )
         create_db()
         
         ControllerFactory.user_service_type = UserDBService

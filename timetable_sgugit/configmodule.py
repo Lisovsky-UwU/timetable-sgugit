@@ -22,6 +22,7 @@ class Log(BaseModel):
 
     level: str = 'INFO'
     retention: int = 7
+    in_file: bool = False
 
 
 class Config(BaseModel):
