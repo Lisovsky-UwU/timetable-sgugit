@@ -1,6 +1,4 @@
-from typing import Type
-from typing import List
-from typing import Iterable
+from typing import Type, List, Iterable
 from functools import lru_cache
 
 from ..services import AudienceDBService

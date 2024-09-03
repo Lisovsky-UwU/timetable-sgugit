@@ -1,22 +1,26 @@
 from typing import Type
 
 from .parser import SgugitWebParser
-from .services import UserDBService
-from .services import GroupDBService
-from .services import LessonDBService
-from .services import TeacherDBService
-from .services import AudienceDBService
-from .services import LessonNameDBService
-from .services import FeedbackDBService
-from .services import FeedbackSendToDBService
-from .controllers import DataFetcher
-from .controllers import UserDBController
-from .controllers import GroupDBController
-from .controllers import LessonDBController
-from .controllers import TeacherDBController
-from .controllers import AudienceDBController
-from .controllers import FeedbackDBController
-from .controllers import LessonNameDBController
+from .services import (
+    UserDBService,
+    GroupDBService,
+    LessonDBService,
+    TeacherDBService,
+    AudienceDBService,
+    LessonNameDBService,
+    FeedbackDBService,
+    FeedbackSendToDBService
+)
+from .controllers import (
+    DataFetcher,
+    UserDBController,
+    GroupDBController,
+    LessonDBController,
+    TeacherDBController,
+    AudienceDBController,
+    FeedbackDBController,
+    LessonNameDBController
+)
 
 
 class ControllerFactory:

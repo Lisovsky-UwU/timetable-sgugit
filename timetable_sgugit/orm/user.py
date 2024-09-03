@@ -1,8 +1,6 @@
-from typing import List
-from typing import Tuple
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import Integer
+from typing import List, Tuple
+
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
 
 from . import Base

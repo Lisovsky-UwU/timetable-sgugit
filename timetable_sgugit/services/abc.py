@@ -1,13 +1,8 @@
-from typing import TypeVar
-from typing import Generic
-from typing import Optional
-from typing import List
-from typing import Iterable
-from typing import Type
+from typing import TypeVar, Generic, Optional, List, Iterable, Type
 from functools import lru_cache
+
 from sqlalchemy import Column
-from sqlalchemy.orm import Session
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Session, Query
 
 from ..orm import session_factory
 from ..exceptions import DataBaseException

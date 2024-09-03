@@ -1,22 +1,14 @@
 from math import ceil
-from typing import List
-from typing import Tuple
-from datetime import datetime
-from datetime import timedelta
+from typing import List, Tuple
+from datetime import datetime, timedelta
 from calendar import Calendar
-from telebot.types import InlineKeyboardMarkup
-from telebot.types import InlineKeyboardButton
+
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from . import templates
 from ..factory import ControllerFactory
-from ..constants import COURSES
-from ..constants import BUILDINGS
-from ..constants import INSTITUTS
-from ..constants import MONTHS_LIST
-from ..constants import WEEKDAY_LIST
-from ..constants import EDUCATION_FORMS
-from ..utils import get_next_month
-from ..utils import get_prev_month
+from ..constants import COURSES, BUILDINGS, INSTITUTS, MONTHS_LIST, WEEKDAY_LIST, EDUCATION_FORMS
+from ..utils import get_next_month, get_prev_month
 from ..orm import Teacher
 
 

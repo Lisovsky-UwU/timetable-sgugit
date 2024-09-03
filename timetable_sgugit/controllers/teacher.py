@@ -1,7 +1,4 @@
-from typing import Type
-from typing import List
-from typing import Iterable
-from typing import Optional
+from typing import Type, List, Iterable, Optional
 from functools import lru_cache
 
 from ..services import TeacherDBService

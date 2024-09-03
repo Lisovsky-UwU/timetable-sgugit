@@ -1,10 +1,7 @@
-from typing import Tuple
-from typing import Type
+from typing import Tuple, Type
 
-from ..services import FeedbackSendToDBService
-from ..services import FeedbackDBService
-from ..orm import FeedbackSendTo
-from ..orm import Feedback
+from ..services import FeedbackSendToDBService, FeedbackDBService
+from ..orm import FeedbackSendTo, Feedback
 
 
 class FeedbackDBController:

@@ -1,16 +1,12 @@
 from typing import List
-from telebot import types
-from telebot import TeleBot
 from datetime import datetime
 
-from . import markups
-from . import templates
-from ..utils import get_week_number
-from ..utils import format_audience_str
+from telebot import types, TeleBot
+
+from . import markups, templates
+from ..utils import get_week_number, format_audience_str
 from ..factory import ControllerFactory
-from ..constants import HOURS_TYPE
-from ..constants import LESSON_TYPE
-from ..constants import WEEKDAYS_TEXT
+from ..constants import HOURS_TYPE, LESSON_TYPE, WEEKDAYS_TEXT
 from ..configmodule import config
 
 

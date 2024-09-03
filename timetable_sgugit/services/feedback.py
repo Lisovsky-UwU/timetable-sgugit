@@ -1,9 +1,9 @@
 from typing import Optional
+
 from sqlalchemy import and_
 
 from .abc import BaseService
-from ..orm import Feedback
-from ..orm import FeedbackSendTo
+from ..orm import Feedback, FeedbackSendTo
 
 
 class FeedbackDBService(BaseService[Feedback]):

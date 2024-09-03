@@ -1,21 +1,21 @@
-from typing import Dict
-from typing import Any
-from telebot import TeleBot
-from telebot import types
+from typing import Dict, Any
 
-from . import MessageHandler
-from . import CallbackHandler
-from .handlers import start
-from .handlers import empty_callback
-from .handlers import group_callback
-from .handlers import regular_message
-from .handlers import teacher_callback
-from .handlers import audience_callback
-from .handlers import favorite_callback
-from .handlers import feedback_callback
-from .handlers import main_menu_callback
-from .handlers import message_handle_exceptions
-from .handlers import callback_handle_exceptions
+from telebot import TeleBot, types
+
+from . import MessageHandler, CallbackHandler
+from .handlers import (
+    start,
+    empty_callback,
+    group_callback,
+    regular_message,
+    teacher_callback,
+    audience_callback,
+    favorite_callback,
+    feedback_callback,
+    main_menu_callback,
+    message_handle_exceptions,
+    callback_handle_exceptions
+)
 from ..configmodule import config
 
 

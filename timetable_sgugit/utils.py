@@ -1,9 +1,9 @@
 from datetime import date
+
 from loguru import logger
 
 from .exceptions import DataBaseException
-from .orm import engine
-from .orm import Base
+from .orm import engine, Base
 
 
 def create_db():

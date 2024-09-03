@@ -1,16 +1,11 @@
 import functools
 from datetime import date
-from telebot import types
-from telebot import TeleBot
-from loguru import logger
-from typing import Tuple
-from typing import List
+from typing import Tuple, List
 
-from . import MessageHandler
-from . import CallbackHandler
-from . import markups
-from . import helpers
-from . import templates
+from loguru import logger
+from telebot import types, TeleBot
+
+from . import MessageHandler, CallbackHandler, markups, helpers, templates
 from ..factory import ControllerFactory
 from ..constants import FAKE_ERROR
 from ..configmodule import config

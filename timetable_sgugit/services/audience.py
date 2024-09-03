@@ -1,5 +1,4 @@
-from typing import Optional
-from typing import List
+from typing import Optional, List
 
 from .abc import BaseService
 from ..orm import Audience

@@ -1,12 +1,8 @@
-from typing import Type
-from typing import List
-from typing import Iterable
-from typing import Optional
+from typing import Type, List, Iterable, Optional
 
 from ..constants import HOURS_TYPE
 from ..services import LessonDBService
-from ..models import LessonAddRequest
-from ..models import LessonInfoModel
+from ..models import LessonAddRequest, LessonInfoModel
 from ..orm import Lesson
 
 

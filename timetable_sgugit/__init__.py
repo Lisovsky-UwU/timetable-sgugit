@@ -2,14 +2,16 @@ from loguru import logger
 
 from .fetch_manager import FetchManager
 from .configmodule import config
-from .services import FeedbackSendToDBService
-from .services import FeedbackDBService
-from .services import LessonNameDBService
-from .services import AudienceDBService
-from .services import TeacherDBService
-from .services import LessonDBService
-from .services import GroupDBService
-from .services import UserDBService
+from .services import (
+    FeedbackSendToDBService,
+    FeedbackDBService,
+    LessonNameDBService,
+    AudienceDBService,
+    TeacherDBService,
+    LessonDBService,
+    GroupDBService,
+    UserDBService
+)
 from .factory import ControllerFactory
 from .utils import create_db
 from .log import init_logger

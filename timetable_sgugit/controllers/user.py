@@ -1,5 +1,4 @@
-from typing import Type
-from typing import Optional
+from typing import Type, Optional
 from functools import lru_cache
 
 from ..services import UserDBService

@@ -1,7 +1,7 @@
 import requests
+from typing import List, Dict
+
 from bs4 import BeautifulSoup
-from typing import List
-from typing import Dict
 from loguru import logger
 
 from .configmodule import config

@@ -1,5 +1,5 @@
-from typing import Optional
-from typing import List
+from typing import Optional, List
+
 from sqlalchemy import and_
 
 from .abc import BaseService

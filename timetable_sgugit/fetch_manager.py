@@ -1,6 +1,7 @@
 from threading import Thread
-from loguru import logger
 from time import sleep
+
+from loguru import logger
 
 from .controllers import DataFetcher
 

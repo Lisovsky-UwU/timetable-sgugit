@@ -1,7 +1,4 @@
-from typing import Type
-from typing import List
-from typing import Optional
-from typing import Iterable
+from typing import Type, List, Optional, Iterable
 
 from ..services import GroupDBService
 from ..models import GroupCreateRequest

@@ -1,21 +1,11 @@
 import requests
 from typing import List
+
 from loguru import logger
 
-from . import GroupDBController
-from . import LessonDBController
-from . import TeacherDBController
-from . import AudienceDBController
-from . import LessonNameDBController
-from ..parser import SgugitWebParser
-from ..models import LessonAddRequest
-from ..models import LessonParseResult
-from ..models import GroupCreateRequest
-from ..models import AudienceCreateRequest
-from ..constants import REVERS_LESSON_TYPE
-from ..constants import EDUCATION_FORMS
-from ..constants import INSTITUTS
-from ..constants import COURSES
+from . import GroupDBController, LessonDBController, TeacherDBController, AudienceDBController, LessonNameDBController
+from ..parser import SgugitWebParser, LessonAddRequest, LessonParseResult, GroupCreateRequest, AudienceCreateRequest
+from ..constants import REVERS_LESSON_TYPE, EDUCATION_FORMS, INSTITUTS, COURSES
 from ..configmodule import config
 
 
