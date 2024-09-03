@@ -4,7 +4,8 @@ from typing import List
 from loguru import logger
 
 from . import GroupDBController, LessonDBController, TeacherDBController, AudienceDBController, LessonNameDBController
-from ..parser import SgugitWebParser, LessonAddRequest, LessonParseResult, GroupCreateRequest, AudienceCreateRequest
+from ..parser import SgugitWebParser
+from ..models import LessonAddRequest, LessonParseResult, GroupCreateRequest, AudienceCreateRequest
 from ..constants import REVERS_LESSON_TYPE, EDUCATION_FORMS, INSTITUTS, COURSES
 from ..configmodule import config
 
