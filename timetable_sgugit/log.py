@@ -13,6 +13,6 @@ def init_logger(log_lvl: str = 'INFO', retention: int = 7, write_in_file: bool =
     }
     
     if write_in_file:
-        logger.add(os.sep.join(['log', '{time:YYYY-MM-DD}.log']), retention=f'{retention} days', **log_config)
+        logger.add(os.sep.join(['log', '{time:YYYY-MM-DD}.log']), retention=f'{retention} days', rotation='00:00', compression='zip', **log_config)
     
     logger.add(sys.stdout, **log_config)
